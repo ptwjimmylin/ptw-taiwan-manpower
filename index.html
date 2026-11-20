@@ -267,12 +267,12 @@
                     </div>
                 </div>
 
-                <!-- Pending 納入計算開關 -->
+                <!-- Pending 納入計算開關 (預設關閉：僅計算 Confirmed 已確認專案) -->
                 <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
                     <label for="toggle-include-pending" class="text-xs text-slate-300 cursor-pointer select-none">
-                        Include Pending / Planning Projects <span class="text-slate-500">| 納入待確認與規劃專案模擬</span>
+                        Include Pending / Planning Projects <span class="text-slate-500">| 納入待確認與規劃專案模擬 (預設僅計已確認)</span>
                     </label>
-                    <input type="checkbox" id="toggle-include-pending" checked onchange="recalculateAll(false)" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
+                    <input type="checkbox" id="toggle-include-pending" onchange="recalculateAll(false)" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
                 </div>
             </div>
         </section>
@@ -1561,6 +1561,14 @@
                     </div>
                 `);
             });
+
+            if (!currentAnalysis?.includePending) {
+                itemsHtml.push(`
+                    <div class="text-[11px] text-slate-500 italic pt-1">
+                        * Pending & Planning projects are excluded from demand calculation. | 尚未確認專案未計入人力需求。
+                    </div>
+                `);
+            }
 
             listEl.innerHTML = itemsHtml.join('');
         }
