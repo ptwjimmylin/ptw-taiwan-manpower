@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795416131172,
+  "updatedAt": 1795416181621,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -170,7 +170,7 @@
       "id": "d_1795416029433",
       "date": "2026-11-24",
       "fab": "tsmc F3",
-      "description": "PM",
+      "description": "DPCDA3 PM",
       "assignee": "Sam",
       "headcount": 1
     },
