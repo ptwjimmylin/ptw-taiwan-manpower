@@ -12,14 +12,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         html {
-            /* 調整為緊湊精緻的 14.5px 儀表板比例，讓單一畫面容納更多資訊 */
+            /* 手機版自動調整為 14.5px 避免小螢幕過於擁擠，電腦大螢幕維持 16.5px 清晰大字 */
             font-size: 14.5px;
             transition: font-size 0.2s ease;
+        }
+        @media (min-width: 768px) {
+            html {
+                font-size: 16.5px;
+            }
         }
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #0b1120;
             color: #e2e8f0;
+            overflow-x: hidden;
         }
         /* 自訂捲軸樣式 */
         ::-webkit-scrollbar {
@@ -50,19 +56,19 @@
     <!-- ===================================================================== -->
     <!-- 頂部導覽列 (Top Navigation & Live Multi-User Cloud Sync Status)       -->
     <!-- ===================================================================== -->
-    <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30">
+        <div class="w-full mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
-                <div class="flex items-start sm:items-center gap-3">
+                <div class="flex items-start sm:items-center gap-2.5 sm:gap-3">
                     <div class="p-2 bg-blue-600/20 border border-blue-500/30 rounded-xl text-blue-400 shrink-0 mt-0.5 sm:mt-0">
                         <i data-lucide="cpu" class="w-5 h-5"></i>
                     </div>
-                    <div>
-                        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">
-                            PTW Taiwan Project & Manpower Arrangement <span class="text-slate-400 font-normal text-xs">| 台灣區工程人力與專案排程控管系統</span>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-sm sm:text-lg font-bold text-white tracking-tight leading-snug">
+                            PTW Taiwan Project & Manpower Arrangement <span class="block sm:inline text-slate-400 font-normal text-xs">| 台灣區工程人力與專案排程控管系統</span>
                         </h1>
-                        <div class="flex flex-wrap items-center gap-2 mt-0.5">
-                            <p class="text-[11px] text-slate-400">
+                        <div class="flex flex-wrap items-center gap-2 mt-1">
+                            <p class="hidden sm:block text-[11px] text-slate-400">
                                 Executive Capacity Dashboard & Daily Field Dispatch Log <span class="text-slate-500">| 營運容量儀表板與每日現場派工行程表</span>
                             </p>
                             <!-- 雲端多人同步狀態指示燈 (可點擊設定 Firebase) -->
@@ -74,7 +80,8 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-2">
+                <!-- 工具列按鈕群 -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                     <!-- 字體大小即時調整器 (A- / A / A+) -->
                     <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl p-0.5" title="Adjust Display Scale & Font Size | 調整畫面與字體大小">
                         <button onclick="setFontSizeScale('sm')" id="font-btn-sm" class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition cursor-pointer">
@@ -91,7 +98,13 @@
                     <!-- 雲端連線設定按鈕 -->
                     <button onclick="openCloudSetupModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 transition cursor-pointer" title="Configure Firebase Cloud Sync | 設定雲端資料庫連線">
                         <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">Cloud Sync <span class="text-slate-400">| 雲端設定</span></span>
+                        <span>Cloud <span class="hidden sm:inline text-slate-400">| 雲端</span></span>
+                    </button>
+
+                    <!-- 一鍵全螢幕切換按鈕 -->
+                    <button onclick="toggleFullScreen()" id="btn-fullscreen-toggle" class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 transition cursor-pointer" title="Toggle Browser Fullscreen | 切換瀏覽器全螢幕">
+                        <i data-lucide="maximize" class="w-3.5 h-3.5"></i>
+                        <span id="fullscreen-btn-text">Fullscreen <span class="text-slate-400">| 全螢幕</span></span>
                     </button>
 
                     <!-- 顯示目前使用者 ID 與快速複製連結 -->
@@ -101,24 +114,24 @@
                     </button>
 
                     <!-- 狀態指示與系統通知開關 -->
-                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer" title="Toggle Audio & Push Alert | 開啟主動警示音效">
+                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer" title="Toggle Audio & Push Alert | 開啟主動警示音效">
                         <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span id="notify-status-text">Alert: ON | 警示開啟</span>
+                        <span id="notify-status-text" class="hidden sm:inline">Alert: ON | 警示開啟</span>
                     </button>
 
                     <button onclick="openProjectModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 transition cursor-pointer">
                         <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>Add Project <span class="font-normal opacity-90">| 新增專案</span></span>
+                        <span>Add Project <span class="hidden sm:inline font-normal opacity-90">| 新增專案</span></span>
                     </button>
 
                     <button onclick="openSupportModal()" id="btn-generate-request" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20 transition cursor-pointer">
                         <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                        <span>Request / Hiring Draft <span class="font-normal opacity-90">| 申請增員草稿</span></span>
+                        <span>Draft <span class="hidden sm:inline font-normal opacity-90">| 增員草稿</span></span>
                     </button>
 
                     <button onclick="exportCSV()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer" title="Export CSV | 匯出 CSV 報表">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">Export <span class="text-slate-400">| 匯出</span></span>
+                        <span class="hidden md:inline">Export <span class="text-slate-400">| 匯出</span></span>
                     </button>
 
                     <button onclick="openResetConfirmModal()" class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition cursor-pointer" title="Reset Default Data | 重設為預設範例資料">
@@ -130,175 +143,220 @@
     </header>
 
     <!-- ===================================================================== -->
-    <!-- 主內容區 (Main Workspace - 緊湊儀表板 + 每月每日現場派工行程表)       -->
+    <!-- 主內容區 (Main Workspace - 100% 全螢幕滿版 + 手機自適應排程系統)      -->
     <!-- ===================================================================== -->
-    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
+    <main class="flex-1 w-full mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-4 space-y-4">
 
         <!-- ================================================================= -->
-        <!-- 1. 精簡型營運容量儀表板 (Compact Capacity & Headcount Dashboard)   -->
+        <!-- 1. 精簡型容量與預警儀表板 (Compact Executive Capacity Dashboard)   -->
         <!-- ================================================================= -->
-        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xl">
-            <!-- 頂排：精簡版主動預警雷達 + What-If 模擬按鈕 -->
-            <div id="auto-aware-banner" class="rounded-xl border p-3 transition-all duration-300 bg-slate-950/70 border-slate-800">
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-xl space-y-3">
+            <!-- 儀表板標題列 + 模擬待確認專案開關 -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800/80">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-400"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-200">
+                        Capacity Control Dashboard <span class="text-slate-400 font-normal">| 台灣區人力容量與預警儀表板</span>
+                    </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <label for="toggle-include-pending" class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer select-none">
+                        <input type="checkbox" id="toggle-include-pending" onchange="recalculateAll(false)" class="w-3.5 h-3.5 rounded accent-blue-600 cursor-pointer">
+                        <span>Include Pending / Planning <span class="text-slate-500">(預設僅計已確認專案)</span></span>
+                    </label>
+                    <button onclick="toggleRulesEditor()" class="text-xs text-blue-400 hover:text-blue-300 font-medium cursor-pointer flex items-center gap-1">
+                        <i data-lucide="sliders-horizontal" class="w-3 h-3"></i>
+                        <span>Sizing Rules | 人數規則</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 可折疊的規模人數規則列 -->
+            <div id="rules-editor" class="hidden grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-950/70 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex items-center justify-between px-2">
+                    <label class="text-xs text-slate-400">Onsite 駐廠:</label>
+                    <input type="number" id="rule-onsite" min="1" value="1" onchange="updateRules()" class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-white text-center">
+                </div>
+                <div class="flex items-center justify-between px-2">
+                    <label class="text-xs text-slate-400">1-Tool 單台:</label>
+                    <input type="number" id="rule-single" min="1" value="2" onchange="updateRules()" class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-white text-center">
+                </div>
+                <div class="flex items-center justify-between px-2">
+                    <label class="text-xs text-slate-400">2-Tool 雙台:</label>
+                    <input type="number" id="rule-double" min="1" value="3" onchange="updateRules()" class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-white text-center">
+                </div>
+                <div class="flex items-center justify-between px-2">
+                    <label class="text-xs text-slate-400">Large 大型:</label>
+                    <input type="number" id="rule-large" min="1" value="6" onchange="updateRules()" class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-white text-center">
+                </div>
+            </div>
+
+            <!-- 緊湊預警橫幅 + What-If 模擬按鈕 -->
+            <div id="auto-aware-banner" class="rounded-xl border p-3 transition-all duration-300 bg-slate-950/60 border-slate-800">
                 <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3">
-                    <div class="flex items-start sm:items-center gap-3">
-                        <div id="radar-icon-box" class="p-2 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 shrink-0">
-                            <i data-lucide="radar" class="w-5 h-5"></i>
+                    <div class="flex items-start gap-2.5">
+                        <div id="radar-icon-box" class="p-2 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 shrink-0 mt-0.5">
+                            <i data-lucide="radar" class="w-4 h-4"></i>
                         </div>
-                        <div class="space-y-0.5">
+                        <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 <span id="radar-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                                    AUTO-AWARE RADAR | 主動式人力預警
+                                    AUTO-AWARE RADAR
                                 </span>
-                                <h2 id="radar-title" class="text-sm sm:text-base font-bold text-white">
-                                    Analyzing capacity... | 正在掃描專案排程與人力負載...
+                                <h2 id="radar-title" class="text-xs sm:text-sm font-bold text-white">
+                                    Analyzing capacity... | 正在掃描排程與派工負載...
                                 </h2>
                             </div>
                             <p id="radar-description" class="text-xs text-slate-300 leading-snug">
-                                Evaluating daily base operations and project overlaps... | 系統正自動評估每日基本營運保底與專案撞期風險...
+                                Evaluating daily base operations, projects, and field dispatch logs...
                             </p>
                             <div id="radar-root-causes" class="flex flex-wrap items-center gap-1.5 pt-0.5"></div>
                         </div>
                     </div>
 
                     <!-- 右側緊湊 What-If 模擬增員壓力測試 -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 shrink-0 xl:w-72 flex flex-col justify-center space-y-1.5">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 shrink-0 w-full xl:w-72 flex flex-col justify-center space-y-1.5">
                         <div class="flex items-center justify-between text-[11px]">
                             <span class="font-semibold text-slate-300 flex items-center gap-1">
                                 <i data-lucide="sliders" class="w-3 h-3 text-blue-400"></i>
-                                What-If Test <span class="text-slate-500">| 模擬增員</span>
+                                What-If Test | 模擬增員
                             </span>
                             <span id="sim-badge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">Baseline</span>
                         </div>
                         <div class="grid grid-cols-3 gap-1">
                             <button onclick="setSimulatedExtraStaff(0)" id="sim-btn-0" class="py-1 px-1.5 rounded-lg text-[11px] font-medium bg-blue-600 text-white transition cursor-pointer">
-                                Current 現有
+                                現有編制
                             </button>
                             <button onclick="setSimulatedExtraStaff(1)" id="sim-btn-1" class="py-1 px-1.5 rounded-lg text-[11px] font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">
-                                +1 Staff 增員
+                                +1 人
                             </button>
                             <button onclick="setSimulatedExtraStaff(2)" id="sim-btn-2" class="py-1 px-1.5 rounded-lg text-[11px] font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">
-                                +2 Staff 增員
+                                +2 人
                             </button>
                         </div>
                         <p id="sim-feedback" class="text-[10px] text-slate-400 truncate">
-                            Click +1 or +2 to verify overload reduction.
+                            Click +1 or +2 to simulate extra staff.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- 中排：單行橫向緊湊參數控制列 + 規模換算規則 + Pending 模擬開關 -->
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 items-center bg-slate-950/60 border border-slate-800/90 rounded-xl p-2.5 sm:px-3.5">
-                <!-- 左側 4 項數字參數 (超緊湊並排) -->
-                <div class="xl:col-span-6 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <label class="text-[11px] text-slate-400 leading-tight">Total Staff<span class="block text-[10px] text-slate-500">總編制人數</span></label>
-                        <input type="number" id="input-total-staff" min="1" max="100" value="8" onchange="updateSettings(true)" class="w-12 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500">
-                    </div>
-
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <label class="text-[11px] text-slate-400 leading-tight">Base Ops<span class="block text-[10px] text-slate-500">營運保底</span></label>
-                        <input type="number" id="input-base-ops" min="0" max="50" value="5" onchange="updateSettings(true)" class="w-12 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-bold text-amber-400 text-center focus:outline-none focus:border-blue-500">
-                    </div>
-
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <label class="text-[11px] text-slate-400 leading-tight">Trigger Days<span class="block text-[10px] text-slate-500">超載門檻天</span></label>
-                        <input type="number" id="input-threshold-days" min="1" max="120" value="15" onchange="updateSettings(true)" class="w-12 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-bold text-rose-400 text-center focus:outline-none focus:border-blue-500">
-                    </div>
-
-                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5">
-                        <label class="text-[11px] text-slate-400 leading-tight">Util. Alert<span class="block text-[10px] text-slate-500">負載警戒%</span></label>
-                        <input type="number" id="input-threshold-util" min="50" max="100" value="85" onchange="updateSettings(true)" class="w-12 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-xs font-bold text-emerald-400 text-center focus:outline-none focus:border-blue-500">
+            <!-- 8 格高密度儀表板指標列 (4 參數設定 + 4 即時 KPI) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+                <!-- 參數 1：總編制 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <label class="block text-[10px] text-slate-400">Total Staff | 總編制</label>
+                    <div class="flex items-center gap-1 mt-1">
+                        <input type="number" id="input-total-staff" min="1" max="100" value="8" onchange="updateSettings(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-sm font-bold text-white focus:outline-none focus:border-blue-500">
+                        <span class="text-[11px] text-slate-500">人</span>
                     </div>
                 </div>
 
-                <!-- 右側規模規則與 Pending 模擬開關 -->
-                <div class="xl:col-span-6 flex flex-wrap items-center justify-between gap-2 border-t xl:border-t-0 xl:border-l border-slate-800 pt-2 xl:pt-0 xl:pl-3">
-                    <div class="flex flex-wrap items-center gap-1.5">
-                        <div id="rules-summary" class="flex flex-wrap gap-1 text-[11px]"></div>
-                        <button onclick="toggleRulesEditor()" class="text-[11px] text-blue-400 hover:text-blue-300 font-medium underline cursor-pointer ml-1">
-                            Rules | 規則
-                        </button>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <label for="toggle-include-pending" class="text-[11px] text-slate-300 cursor-pointer select-none">
-                            Include Pending <span class="text-slate-500">| 含待確認</span>
-                        </label>
-                        <input type="checkbox" id="toggle-include-pending" onchange="recalculateAll(false)" class="w-3.5 h-3.5 rounded accent-blue-600 cursor-pointer">
+                <!-- 參數 2：基本營運保底 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <label class="block text-[10px] text-slate-400">Base Ops | 營運保底</label>
+                    <div class="flex items-center gap-1 mt-1">
+                        <input type="number" id="input-base-ops" min="0" max="50" value="5" onchange="updateSettings(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-sm font-bold text-amber-400 focus:outline-none focus:border-blue-500">
+                        <span class="text-[11px] text-slate-500">人</span>
                     </div>
                 </div>
 
-                <!-- 可折疊的規則編輯器 -->
-                <div id="rules-editor" class="hidden xl:col-span-12 grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800">
-                    <div>
-                        <label class="block text-[10px] text-slate-400">Onsite 駐廠</label>
-                        <input type="number" id="rule-onsite" min="1" value="1" onchange="updateRules()" class="mt-0.5 w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+                <!-- 參數 3：超載天數門檻 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <label class="block text-[10px] text-slate-400">Trigger | 缺人門檻</label>
+                    <div class="flex items-center gap-1 mt-1">
+                        <input type="number" id="input-threshold-days" min="1" max="120" value="15" onchange="updateSettings(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-sm font-bold text-rose-400 focus:outline-none focus:border-blue-500">
+                        <span class="text-[11px] text-slate-500">天</span>
                     </div>
-                    <div>
-                        <label class="block text-[10px] text-slate-400">1-Tool 單台</label>
-                        <input type="number" id="rule-single" min="1" value="2" onchange="updateRules()" class="mt-0.5 w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+                </div>
+
+                <!-- 參數 4：負載警戒線 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <label class="block text-[10px] text-slate-400">Util Alert | 負載警戒</label>
+                    <div class="flex items-center gap-1 mt-1">
+                        <input type="number" id="input-threshold-util" min="50" max="100" value="85" onchange="updateSettings(true)" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-sm font-bold text-emerald-400 focus:outline-none focus:border-blue-500">
+                        <span class="text-[11px] text-slate-500">%</span>
                     </div>
-                    <div>
-                        <label class="block text-[10px] text-slate-400">2-Tool 雙台</label>
-                        <input type="number" id="rule-double" min="1" value="3" onchange="updateRules()" class="mt-0.5 w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+                </div>
+
+                <!-- KPI 1：專案可用彈性池 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[10px] text-slate-400">Flex Pool | 可用彈性池</div>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="kpi-flex-pool" class="text-lg font-bold text-white">3</span>
+                        <span class="text-[10px] text-slate-400">人/日</span>
                     </div>
-                    <div>
-                        <label class="block text-[10px] text-slate-400">Large 大型</label>
-                        <input type="number" id="rule-large" min="1" value="6" onchange="updateRules()" class="mt-0.5 w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white">
+                    <p id="kpi-flex-sub" class="text-[10px] text-slate-500 truncate">8 - 5 保底</p>
+                </div>
+
+                <!-- KPI 2：單日最大人力缺口 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[10px] text-slate-400">Peak Gap | 最大缺口</div>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="kpi-max-deficit" class="text-lg font-bold text-rose-400">0</span>
+                        <span class="text-[10px] text-slate-400">人</span>
                     </div>
+                    <p id="kpi-max-deficit-date" class="text-[10px] text-slate-500 truncate">無缺口</p>
+                </div>
+
+                <!-- KPI 3：累計超載天數 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[10px] text-slate-400">Overload | 超載天數</div>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="kpi-overload-days" class="text-lg font-bold text-amber-400">0</span>
+                        <span class="text-[10px] text-slate-400">工作天</span>
+                    </div>
+                    <p id="kpi-overload-sub" class="text-[10px] text-slate-500 truncate">門檻 15 天</p>
+                </div>
+
+                <!-- KPI 4：平均負載率 -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+                    <div class="text-[10px] text-slate-400">Avg Util | 平均負載</div>
+                    <div class="mt-1 flex items-baseline gap-1">
+                        <span id="kpi-avg-util" class="text-lg font-bold text-emerald-400">0%</span>
+                        <span class="text-[10px] text-slate-400">使用率</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 truncate">含營運保底</p>
                 </div>
             </div>
 
-            <!-- 底排：4 格緊湊型 KPI 數據條 -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-                <div class="bg-slate-950/70 border border-slate-800/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
-                    <div>
-                        <div class="text-[11px] text-slate-400">Flex Project Pool <span class="text-slate-500">| 專案彈性池</span></div>
-                        <div class="flex items-baseline gap-1.5 mt-0.5">
-                            <span id="kpi-flex-pool" class="text-xl font-bold text-white">3</span>
-                            <span class="text-[11px] text-slate-400">Eng/day</span>
+            <!-- 精簡每日負載趨勢圖 + 單日檢視條 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-1">
+                <div class="lg:col-span-8 bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                        <span class="text-xs font-semibold text-slate-300">
+                            Daily Load Trend (2026-11 ~ 2027-03) <span class="text-slate-500 font-normal">| 點擊長條檢視單日人力</span>
+                        </span>
+                        <div class="flex items-center gap-2.5 text-[10px] text-slate-400">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-emerald-500"></span>Safe 充足</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-amber-500"></span>Full 滿載</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-rose-500"></span>Deficit 缺人</span>
                         </div>
-                        <p id="kpi-flex-sub" class="text-[10px] text-slate-500">Supply 8 - Base 5</p>
                     </div>
-                    <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400"><i data-lucide="users" class="w-4 h-4"></i></div>
+                    <div class="overflow-x-auto">
+                        <div id="timeline-chart-container" class="flex items-end gap-0.5 h-24 min-w-[780px] pt-2 px-1 border-b border-slate-800 select-none"></div>
+                        <div class="flex justify-between min-w-[780px] px-1 pt-1 text-[10px] text-slate-500">
+                            <span>2026-11</span>
+                            <span>2026-12</span>
+                            <span>2027-01</span>
+                            <span>2027-02</span>
+                            <span>2027-03</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-slate-950/70 border border-slate-800/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
-                    <div>
-                        <div class="text-[11px] text-slate-400">Peak Deficit Gap <span class="text-slate-500">| 單日最大缺口</span></div>
-                        <div class="flex items-baseline gap-1.5 mt-0.5">
-                            <span id="kpi-max-deficit" class="text-xl font-bold text-rose-400">0</span>
-                            <span class="text-[11px] text-slate-400">Eng</span>
-                        </div>
-                        <p id="kpi-max-deficit-date" class="text-[10px] text-slate-500">No deficit</p>
+                <!-- 單日拆解迷你檢視器 -->
+                <div class="lg:col-span-4 bg-slate-950/60 border border-slate-800 rounded-xl p-3 flex flex-col justify-between space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span id="inspector-date" class="text-xs font-bold text-white">2026-12-14 (Mon)</span>
+                        <span id="inspector-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300">OK</span>
                     </div>
-                    <div class="p-2 rounded-lg bg-rose-500/10 text-rose-400"><i data-lucide="alert-octagon" class="w-4 h-4"></i></div>
-                </div>
-
-                <div class="bg-slate-950/70 border border-slate-800/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
-                    <div>
-                        <div class="text-[11px] text-slate-400">Overload Days <span class="text-slate-500">| 累計超載天</span></div>
-                        <div class="flex items-baseline gap-1.5 mt-0.5">
-                            <span id="kpi-overload-days" class="text-xl font-bold text-amber-400">0</span>
-                            <span class="text-[11px] text-slate-400">Days</span>
-                        </div>
-                        <p id="kpi-overload-sub" class="text-[10px] text-slate-500">Threshold: 15d</p>
+                    <div class="grid grid-cols-3 gap-1.5 bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-center text-[11px]">
+                        <div><span class="text-slate-500 block text-[10px]">供給</span><strong id="inspector-supply" class="text-white">8 人</strong></div>
+                        <div class="border-x border-slate-800"><span class="text-slate-500 block text-[10px]">需求</span><strong id="inspector-demand" class="text-amber-400">6 人</strong></div>
+                        <div><span class="text-slate-500 block text-[10px]">結餘</span><strong id="inspector-balance" class="text-emerald-400">+2 人</strong></div>
                     </div>
-                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400"><i data-lucide="calendar-x" class="w-4 h-4"></i></div>
-                </div>
-
-                <div class="bg-slate-950/70 border border-slate-800/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
-                    <div>
-                        <div class="text-[11px] text-slate-400">Avg Utilization <span class="text-slate-500">| 平均負載率</span></div>
-                        <div class="flex items-baseline gap-1.5 mt-0.5">
-                            <span id="kpi-avg-util" class="text-xl font-bold text-emerald-400">0%</span>
-                            <span class="text-[11px] text-slate-400">Util.</span>
-                        </div>
-                        <p class="text-[10px] text-slate-500">Incl. Base Ops & Dispatch</p>
-                    </div>
-                    <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><i data-lucide="activity" class="w-4 h-4"></i></div>
+                    <div id="inspector-project-list" class="space-y-1 max-h-20 overflow-y-auto pr-1 text-[11px]"></div>
                 </div>
             </div>
         </section>
@@ -307,23 +365,23 @@
         <!-- 2. 每月每日現場派工與叫修行程表 (Monthly Daily Dispatch & Issue Log) -->
         <!-- ================================================================= -->
         <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div class="p-4 border-b border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 bg-slate-900/95">
+            <div class="p-3.5 sm:p-4 border-b border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 bg-slate-900/95">
                 <div class="flex items-start sm:items-center gap-3">
                     <div class="p-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">
                         <i data-lucide="calendar-days" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-white">
-                            Monthly Daily Field Dispatch & Issue Schedule <span class="text-slate-400 font-normal text-xs">| 每月每日現場派工與叫修行程表</span>
+                        <h3 class="text-sm sm:text-base font-bold text-white">
+                            Monthly Daily Field Dispatch & Issue Schedule <span class="block sm:inline text-slate-400 font-normal text-xs">| 每月每日現場派工與叫修行程表</span>
                         </h3>
-                        <p class="text-xs text-slate-400">
-                            Fill in daily Issue Fab, Issue Description, and Assigned Engineer(s) — auto-syncs with capacity chart & team members | 填寫每日廠區問題與派工人員，自動計入全站人力負載並即時同步
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Fill in daily Issue Fab, Issue Description, and Assigned Engineer(s) | 填寫每日廠區問題與派工人員，自動計入全站人力負載
                         </p>
                     </div>
                 </div>
 
                 <!-- 月份切換器與快速新增按鈕 -->
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2">
                     <div class="flex items-center bg-slate-950 border border-slate-700 rounded-xl p-1">
                         <button onclick="changeDispatchMonth(-1)" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer" title="Previous Month | 上個月">
                             <i data-lucide="chevron-left" class="w-4 h-4"></i>
@@ -336,114 +394,47 @@
 
                     <button onclick="openDailyDispatchModal()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 transition cursor-pointer">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                        <span>Add Daily Dispatch <span class="font-normal opacity-90">| 登記今日派工</span></span>
+                        <span>Add Dispatch <span class="hidden sm:inline font-normal opacity-90">| 登記派工</span></span>
                     </button>
                 </div>
             </div>
 
-            <!-- 整月每日一覽表格 (1號 ~ 月底) -->
-            <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
+            <!-- 電腦版：整月每日一覽表格 (md 以上顯示) -->
+            <div class="hidden md:block overflow-x-auto max-h-[540px] overflow-y-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead class="sticky top-0 z-10 bg-slate-950 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    <thead class="sticky top-0 z-10 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         <tr>
-                            <th class="py-2.5 px-3.5 w-32">Date / Day <span class="block font-normal text-slate-500">日期 / 星期</span></th>
-                            <th class="py-2.5 px-3.5 w-36">Issue Fab <span class="block font-normal text-slate-500">發生廠區</span></th>
-                            <th class="py-2.5 px-3.5">Issue Description / Daily Task <span class="block font-normal text-slate-500">異常描述 / 每日派工內容</span></th>
-                            <th class="py-2.5 px-3.5 w-48">Assigned Engineer(s) <span class="block font-normal text-slate-500">指派人員與人數</span></th>
-                            <th class="py-2.5 px-3.5 w-36 text-center">Day Manpower <span class="block font-normal text-slate-500">當日總負荷狀態</span></th>
-                            <th class="py-2.5 px-3.5 w-24 text-right">Action <span class="block font-normal text-slate-500">填寫/編輯</span></th>
+                            <th class="py-3 px-4 w-36">Date / Day <span class="block font-normal text-slate-500">日期 / 星期</span></th>
+                            <th class="py-3 px-4 w-40">Issue Fab <span class="block font-normal text-slate-500">發生廠區</span></th>
+                            <th class="py-3 px-4">Issue Description / Daily Task <span class="block font-normal text-slate-500">異常描述 / 每日派工內容</span></th>
+                            <th class="py-3 px-4 w-52">Assigned Engineer(s) <span class="block font-normal text-slate-500">指派人員與人數</span></th>
+                            <th class="py-3 px-4 w-40 text-center">Day Manpower <span class="block font-normal text-slate-500">當日總負荷狀態</span></th>
+                            <th class="py-3 px-4 w-28 text-right">Action <span class="block font-normal text-slate-500">填寫/編輯</span></th>
                         </tr>
                     </thead>
-                    <tbody id="monthly-dispatch-tbody" class="divide-y divide-slate-800/60 text-xs">
+                    <tbody id="monthly-dispatch-tbody" class="divide-y divide-slate-800/60 text-sm">
                         <!-- 由 JS 動態生成當月每一天 (1日~30/31日) -->
                     </tbody>
                 </table>
             </div>
-        </section>
 
-        <!-- 3. 每日人力負載視覺化時間軸與單日明細 (Daily Load Chart & Inspector) -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <!-- 左側：橫向可捲動每日長條圖 (2026-11 ~ 2027-03) -->
-            <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <div>
-                        <h3 class="text-sm font-bold text-white">
-                            Daily Manpower Load Timeline (Nov 2026 – Mar 2027) <span class="text-slate-400 font-normal text-xs">| 每日人力負載趨勢圖</span>
-                        </h3>
-                        <p class="text-[11px] text-slate-400">Click any workday bar to inspect active projects & deficit | 點擊任意工作日長條查看當日明細</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3 text-[11px]">
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>Safe 充足</span>
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-amber-500"></span>Full 滿載</span>
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>Deficit 缺人超載</span>
-                    </div>
-                </div>
-
-                <!-- 圖表容器 -->
-                <div class="relative overflow-x-auto pb-2">
-                    <div id="timeline-chart-container" class="flex items-end gap-1 h-48 min-w-[960px] pt-6 px-2 border-b border-slate-800 select-none">
-                        <!-- 由 JS 動態生成每日長條 -->
-                    </div>
-                    <div id="timeline-month-labels" class="flex justify-between min-w-[960px] px-2 pt-1.5 text-xs font-medium text-slate-400">
-                        <span>2026-11 (Nov)</span>
-                        <span>2026-12 (Dec Peak)</span>
-                        <span>2027-01 (Jan)</span>
-                        <span>2027-02 (Feb / CNY)</span>
-                        <span>2027-03 (Mar Wave)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 右側：單日人力拆解檢視器 (Selected Day Breakdown Inspector) -->
-            <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4">
-                <div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Day Inspector | 單日人力明細</span>
-                        <span id="inspector-status-badge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300">Deficit -3 | 缺口 3 人</span>
-                    </div>
-                    <h4 id="inspector-date" class="text-lg font-bold text-white mt-1">2026-12-14 (Mon)</h4>
-
-                    <!-- 數字拆解 -->
-                    <div class="grid grid-cols-3 gap-2 mt-3 bg-slate-950/70 border border-slate-800 rounded-xl p-2.5 text-center">
-                        <div>
-                            <div class="text-[10px] text-slate-400">Supply 供給</div>
-                            <div id="inspector-supply" class="text-sm font-bold text-white mt-0.5">8 人</div>
-                        </div>
-                        <div class="border-x border-slate-800">
-                            <div class="text-[10px] text-slate-400">Demand 需求</div>
-                            <div id="inspector-demand" class="text-sm font-bold text-amber-400 mt-0.5">11 人</div>
-                        </div>
-                        <div>
-                            <div class="text-[10px] text-slate-400">Balance 結餘</div>
-                            <div id="inspector-balance" class="text-sm font-bold text-rose-400 mt-0.5">-3 人</div>
-                        </div>
-                    </div>
-
-                    <!-- 當日佔用清單 -->
-                    <div class="mt-4 space-y-2">
-                        <div class="text-xs font-semibold text-slate-300">Active Allocations | 當日人力分配明細：</div>
-                        <div id="inspector-project-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-                            <!-- 由 JS 動態填入 -->
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="openSupportModal()" class="w-full py-2 px-3 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer flex items-center justify-center gap-1.5">
-                    <i data-lucide="send" class="w-3.5 h-3.5 text-rose-400"></i>
-                    <span>Draft Support / Hiring Request | 產生申請草稿</span>
-                </button>
+            <!-- 手機版：整月每日卡片列表 (md 以下顯示，方便單手滑動與點擊填寫) -->
+            <div id="monthly-dispatch-mobile-list" class="md:hidden divide-y divide-slate-800/70 max-h-[520px] overflow-y-auto">
+                <!-- 由 JS 動態生成手機版每日卡片 -->
             </div>
         </section>
 
-        <!-- 4. 專案排程與人力配置總表 (Collaborative Project Schedule Table) -->
+        <!-- ================================================================= -->
+        <!-- 3. 長期專案排程與人力配置總表 (Project Schedule Table)             -->
+        <!-- ================================================================= -->
         <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-            <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="p-3.5 sm:p-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                    <h3 class="text-base font-bold text-white">
-                        Project Schedule & Manpower Allocation <span class="text-slate-400 font-normal text-xs">| 專案排程與人力需求清單 (多人即時協作)</span>
+                    <h3 class="text-sm sm:text-base font-bold text-white">
+                        Project Schedule & Manpower Allocation <span class="block sm:inline text-slate-400 font-normal text-xs">| 專案排程與人力需求清單</span>
                     </h3>
                     <p class="text-xs text-slate-400 mt-0.5">
-                        All changes sync automatically across team members in real time | 任何新增、編輯或成案確認皆會即時同步給所有線上同事
+                        Only "Confirmed" projects count toward manpower demand unless simulation is checked | 預設僅計入「已確認」專案
                     </p>
                 </div>
 
@@ -456,15 +447,16 @@
                         Confirmed | 已確認
                     </button>
                     <button onclick="setFilterStatus('Pending')" id="filter-Pending" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">
-                        Pending | 待確認/報價
+                        Pending | 待確認
                     </button>
                     <button onclick="setFilterStatus('Planning')" id="filter-Planning" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">
-                        2027 Planning | 明年規劃
+                        2027 Plan | 規劃中
                     </button>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <!-- 電腦版專案表格 (md 以上顯示) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-950/60 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -476,20 +468,96 @@
                             <th class="py-3 px-4 text-right">Actions <span class="block font-normal text-slate-500">協作操作</span></th>
                         </tr>
                     </thead>
-                    <tbody id="project-table-body" class="divide-y divide-slate-800/70 text-xs">
+                    <tbody id="project-table-body" class="divide-y divide-slate-800/70 text-sm">
                         <!-- 由 JS 動態渲染 -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- 手機版專案卡片列表 (md 以下顯示) -->
+            <div id="project-mobile-cards" class="md:hidden divide-y divide-slate-800/70">
+                <!-- 由 JS 動態渲染 -->
             </div>
         </section>
 
     </main>
 
     <!-- ===================================================================== -->
-    <!-- Modal 1：新增 / 編輯專案視窗 (Add / Edit Project Modal)               -->
+    <!-- Modal 1：新增 / 編輯每日派工與叫修行程視窗 (Daily Dispatch Modal)      -->
+    <!-- ===================================================================== -->
+    <div id="dispatch-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="wrench" class="w-5 h-5 text-emerald-400"></i>
+                    <h3 id="modal-dispatch-title" class="text-base font-bold text-white">Daily Field Dispatch & Issue | 每日派工與異常登記</h3>
+                </div>
+                <button onclick="closeDailyDispatchModal()" class="text-slate-400 hover:text-white cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="dispatch-form" onsubmit="saveDailyDispatch(event)" class="space-y-3.5 text-xs sm:text-sm">
+                <input type="hidden" id="dispatch-form-id">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-300 mb-1">Dispatch Date | 派工日期 *</label>
+                        <input type="date" id="dispatch-form-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-300 mb-1">Issue Fab | 發生廠區 *</label>
+                        <input type="text" id="dispatch-form-fab" required list="fab-suggestions" placeholder="e.g. TSMC Fab 12 / UMC 8S" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+                        <datalist id="fab-suggestions">
+                            <option value="TSMC Fab 3">
+                            <option value="TSMC Fab 8">
+                            <option value="TSMC Fab 12">
+                            <option value="TSMC Fab 15">
+                            <option value="TSMC Fab 18">
+                            <option value="UMC 8S">
+                            <option value="UMC 8E">
+                            <option value="UMC 12A">
+                            <option value="Micron">
+                            <option value="PSMC">
+                            <option value="WaveTek">
+                        </datalist>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-300 mb-1">Issue Description / Task | 異常描述與現場任務 *</label>
+                    <textarea id="dispatch-form-desc" rows="2" required placeholder="e.g. Loadport sensor alarm troubleshooting & PM check | Loadport 感測器異常排查與保養" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2">
+                        <label class="block font-medium text-slate-300 mb-1">Assigned Engineer(s) | 指派工程師姓名 *</label>
+                        <input type="text" id="dispatch-form-assignee" required placeholder="e.g. Kevin, Alex" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-300 mb-1">Headcount | 派出人數 *</label>
+                        <input type="number" id="dispatch-form-headcount" min="0" max="20" required value="1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-slate-400">
+                    * Note: If engineer is already covered by the 5-person Base Ops Floor, set Headcount to <strong>0</strong>; if extra manpower is needed, enter <strong>1 or more</strong>.
+                    <span class="block text-slate-500">* 註：若由原本 5 人基本營運保底人力處理，派出人數可填 0（僅作紀錄）；若需額外調派專案人力，請填實際人數。</span>
+                </p>
+
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeDailyDispatchModal()" class="px-4 py-2 rounded-xl font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">Cancel | 取消</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer">Save & Sync | 儲存派工</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- Modal 2：新增 / 編輯專案視窗 (Add / Edit Project Modal)               -->
     <!-- ===================================================================== -->
     <div id="project-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 id="modal-project-title" class="text-base font-bold text-white">Add New Project | 新增專案排程</h3>
                 <button onclick="closeProjectModal()" class="text-slate-400 hover:text-white cursor-pointer">
@@ -497,7 +565,7 @@
                 </button>
             </div>
 
-            <form id="project-form" onsubmit="saveProject(event)" class="space-y-3.5 text-xs">
+            <form id="project-form" onsubmit="saveProject(event)" class="space-y-3.5 text-xs sm:text-sm">
                 <input type="hidden" id="form-project-id">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -562,10 +630,10 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 2：支援調度 / 長期增聘申請單自動產生器 (Request Generator Modal)   -->
+    <!-- Modal 3：支援調度 / 長期增聘申請單自動產生器 (Request Generator Modal)   -->
     <!-- ===================================================================== -->
     <div id="support-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                     <h3 class="text-base font-bold text-white">Auto-Generated Request Draft | 自動產生雙語申請單草稿</h3>
@@ -604,7 +672,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 3：重設雲端共享資料確認視窗 (避免誤觸覆蓋同事編輯內容)          -->
+    <!-- Modal 4：重設雲端共享資料確認視窗                                      -->
     <!-- ===================================================================== -->
     <div id="reset-confirm-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
@@ -624,7 +692,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 4：團隊雲端資料庫 (Firebase) 連線設定精靈 (免改程式碼)            -->
+    <!-- Modal 5：團隊雲端資料庫 (Firebase) 連線設定精靈 (免改程式碼)            -->
     <!-- ===================================================================== -->
     <div id="cloud-setup-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4">
@@ -678,64 +746,6 @@
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- Modal 5：登記 / 編輯每日現場派工與 Issue 行程視窗                      -->
-    <!-- ===================================================================== -->
-    <div id="dispatch-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-400"></i>
-                    <h3 id="modal-dispatch-title" class="text-base font-bold text-white">Daily Field Dispatch & Issue Log | 每日現場派工與異常登記</h3>
-                </div>
-                <button onclick="closeDailyDispatchModal()" class="text-slate-400 hover:text-white cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form id="dispatch-form" onsubmit="saveDailyDispatch(event)" class="space-y-3 text-xs">
-                <input type="hidden" id="dispatch-id">
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-medium text-slate-300 mb-1">Date | 派工日期 *</label>
-                        <input type="date" id="dispatch-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-medium text-slate-300 mb-1">Issue Fab | 客戶與廠區 *</label>
-                        <input type="text" id="dispatch-fab" required placeholder="e.g. TSMC Fab 3 / UMC 8S / Micron" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-medium text-slate-300 mb-1">Issue Description / Task | 異常描述 / 派工任務內容 *</label>
-                    <textarea id="dispatch-desc" rows="3" required placeholder="e.g. Loadport sensor alarm troubleshooting & alignment | 機台 Loadport 異常檢修與校正" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div class="sm:col-span-2">
-                        <label class="block font-medium text-slate-300 mb-1">Assigned Engineer(s) | 指派工程師姓名 *</label>
-                        <input type="text" id="dispatch-assignee" required placeholder="e.g. Kevin, Alex" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-medium text-slate-300 mb-1">Staff Count | 派出人數 *</label>
-                        <input type="number" id="dispatch-headcount" min="0" max="20" required value="1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-2.5 text-[11px] text-slate-400">
-                    * Tip: Setting Staff Count > 0 will automatically add to that day's manpower demand on the dashboard chart. (Set 0 if covered by existing Base Ops floor)
-                    <span class="block text-slate-500">提示：若填寫派出人數 ≥ 1，系統會自動累加至當日總人力需求；若由原本營運保底人力處理可填 0。</span>
-                </div>
-
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeDailyDispatchModal()" class="px-4 py-2 rounded-xl font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">Cancel | 取消</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer">Save & Sync | 儲存並同步</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- 底部輕量 Toast 提示框 -->
     <div id="toast-notification" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2 bg-slate-800 border border-slate-700 text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-medium transition-all">
         <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
@@ -750,7 +760,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. 預設專案資料庫 (首次啟動若雲端尚無資料時自動初始化)
+        // 1. 預設專案資料庫
         const DEFAULT_PROJECTS = [
             {
                 id: 'p1',
@@ -886,21 +896,21 @@
             }
         ];
 
-        // 預設每日現場派工與異常行程範例
-        const DEFAULT_DISPATCHES = [
+        // 預設每日派工範例紀錄 (示範每月每日填寫格式)
+        const DEFAULT_DISPATCH_LOGS = [
             {
-                id: 'd1',
-                date: '2026-11-23',
+                id: 'd_init_1',
+                date: '2026-11-10',
                 fab: 'TSMC Fab 12',
-                description: 'Loadport door open timeout check & teaching | 機台 Loadport 開門逾時檢修與點位校正',
+                description: 'Indexer alignment & vacuum leak troubleshooting | Indexer 校正與真空測漏排查',
                 assignee: 'Kevin',
                 headcount: 1
             },
             {
-                id: 'd2',
-                date: '2026-11-25',
-                fab: 'UMC 8S',
-                description: 'Pre-deinstall site survey & parts verification | 12月拆機前現場場勘與料件清點',
+                id: 'd_init_2',
+                date: '2026-11-18',
+                fab: 'UMC 12A',
+                description: 'Emergency Loadport motor replacement & calibration | 緊急更換 Loadport 馬達與校正',
                 assignee: 'Alex, Jason',
                 headcount: 2
             }
@@ -908,8 +918,7 @@
 
         // 應用程式狀態
         let projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
-        let dailyDispatches = JSON.parse(JSON.stringify(DEFAULT_DISPATCHES));
-        let selectedDispatchMonth = '2026-11';
+        let dispatchLogs = JSON.parse(JSON.stringify(DEFAULT_DISPATCH_LOGS));
         let appSettings = {
             totalStaff: 8,
             baseOps: 5,
@@ -925,6 +934,7 @@
         let simulatedExtraStaff = 0;
         let currentFilterStatus = 'ALL';
         let selectedDateStr = '2026-12-14';
+        let selectedDispatchMonth = '2026-11';
         let dailyCalculations = [];
         let currentAnalysis = null;
         let currentRequestMode = 'HIRING';
@@ -940,14 +950,40 @@
         let isDispatchSeedDone = false;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'ptw-taiwan-prod';
         const LOCAL_STORAGE_FB_KEY = 'ptw_taiwan_firebase_config_v1';
-        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v1';
-        const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
+        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v2';
+        const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v2';
 
-        // 字體大小縮放控制 (sm: 13.5px, md: 14.5px 預設緊湊儀表板, lg: 16.5px 放大字體)
+        // 一鍵全螢幕切換功能
+        window.toggleFullScreen = function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {
+                    showToast('Press F11 for browser fullscreen | 可按鍵盤 F11 進入全螢幕');
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        };
+
+        document.addEventListener('fullscreenchange', () => {
+            const label = document.getElementById('fullscreen-btn-text');
+            if (!label) return;
+            if (document.fullscreenElement) {
+                label.innerHTML = 'Exit Fullscreen <span class="text-slate-400">| 離開全螢幕</span>';
+            } else {
+                label.innerHTML = 'Fullscreen <span class="text-slate-400">| 全螢幕</span>';
+            }
+        });
+
+        // 字體大小縮放控制 (智慧偵測手機與電腦螢幕)
         window.setFontSizeScale = function (scale) {
-            const sizes = { sm: '13.5px', md: '14.5px', lg: '16.5px' };
-            const labels = { sm: 'Compact | 緊湊小字', md: 'Dashboard (Default) | 儀表板標準', lg: 'Large | 舒適大字' };
-            document.documentElement.style.fontSize = sizes[scale] || '14.5px';
+            const isMobile = window.innerWidth < 768;
+            const sizes = isMobile
+                ? { sm: '13.5px', md: '14.5px', lg: '16px' }
+                : { sm: '15px', md: '16.5px', lg: '18.5px' };
+            const labels = { sm: 'Compact | 標準', md: 'Default | 舒適大字', lg: 'Extra Large | 特大字體' };
+            document.documentElement.style.fontSize = sizes[scale] || (isMobile ? '14.5px' : '16.5px');
 
             ['sm', 'md', 'lg'].forEach(key => {
                 const btn = document.getElementById(`font-btn-${key}`);
@@ -970,9 +1006,12 @@
 
         function initFontSizeScale() {
             try {
+                const isMobile = window.innerWidth < 768;
                 const savedScale = localStorage.getItem(LOCAL_STORAGE_FONT_KEY) || 'md';
-                const sizes = { sm: '13.5px', md: '14.5px', lg: '16.5px' };
-                document.documentElement.style.fontSize = sizes[savedScale] || '14.5px';
+                const sizes = isMobile
+                    ? { sm: '13.5px', md: '14.5px', lg: '16px' }
+                    : { sm: '15px', md: '16.5px', lg: '18.5px' };
+                document.documentElement.style.fontSize = sizes[savedScale] || (isMobile ? '14.5px' : '16.5px');
                 ['sm', 'md', 'lg'].forEach(key => {
                     const btn = document.getElementById(`font-btn-${key}`);
                     if (!btn) return;
@@ -983,7 +1022,6 @@
             } catch (e) {}
         }
 
-        // 若您想直接寫死在程式碼給所有同事免設定，也可把物件貼在這裡取代 null：
         const HARDCODED_FIREBASE_CONFIG = null;
 
         function loadLocalBackupIfOffline() {
@@ -993,7 +1031,7 @@
                 const parsed = JSON.parse(raw);
                 if (parsed.settings) appSettings = parsed.settings;
                 if (Array.isArray(parsed.projects) && parsed.projects.length > 0) projects = parsed.projects;
-                if (Array.isArray(parsed.dailyDispatches)) dailyDispatches = parsed.dailyDispatches;
+                if (Array.isArray(parsed.dispatchLogs)) dispatchLogs = parsed.dispatchLogs;
             } catch (e) {}
         }
 
@@ -1002,7 +1040,7 @@
                 localStorage.setItem(LOCAL_STORAGE_DATA_KEY, JSON.stringify({
                     settings: appSettings,
                     projects: projects,
-                    dailyDispatches: dailyDispatches
+                    dispatchLogs: dispatchLogs
                 }));
             } catch (e) {}
         }
@@ -1053,13 +1091,12 @@
         }
 
         // =====================================================================
-        // 2. 初始化雲端即時協作連線 (Auth First -> Public Shared Collections)
+        // 2. 初始化雲端即時協作連線
         // =====================================================================
         async function initApp() {
             initFontSizeScale();
             loadLocalBackupIfOffline();
             syncSettingsToInputs();
-            renderRulesSummary();
             recalculateAll(false);
             lucide.createIcons();
 
@@ -1117,7 +1154,6 @@
                         }
                     };
                     syncSettingsToInputs();
-                    renderRulesSummary();
                     recalculateAll(false);
                 } else {
                     await setDoc(settingsDocRef, appSettings);
@@ -1156,26 +1192,27 @@
                 updateSyncBadge('OFFLINE', 'Sync Error | 同步中斷');
             });
 
-            // 監聽共享每日現場派工行程表
-            const dispatchColRef = collection(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatches');
+            // 監聽每日派工與叫修行程紀錄
+            const dispatchColRef = collection(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatch');
             onSnapshot(dispatchColRef, async (snapshot) => {
                 if (snapshot.empty && !isDispatchSeedDone) {
                     isDispatchSeedDone = true;
                     const batch = writeBatch(db);
-                    DEFAULT_DISPATCHES.forEach((d) => {
-                        const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatches', d.id);
-                        batch.set(dRef, { ...d, updatedAt: Date.now() });
+                    DEFAULT_DISPATCH_LOGS.forEach(item => {
+                        const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatch', item.id);
+                        batch.set(dRef, { ...item, updatedAt: Date.now() });
                     });
                     await batch.commit();
                     return;
                 }
 
                 isDispatchSeedDone = true;
-                const cloudDispatches = [];
+                const cloudLogs = [];
                 snapshot.forEach(docSnap => {
-                    cloudDispatches.push(docSnap.data());
+                    cloudLogs.push(docSnap.data());
                 });
-                dailyDispatches = cloudDispatches;
+                cloudLogs.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+                dispatchLogs = cloudLogs;
                 recalculateAll(false);
             }, (error) => {
                 console.error('Dispatch listener error:', error);
@@ -1311,8 +1348,8 @@
             saveLocalBackup();
             if (!isCloudReady || !currentUser || !db) return;
             try {
-                updateSyncBadge('SYNCING', 'Syncing Dispatch... | 同步每日派工中...');
-                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatches', dispatchObj.id);
+                updateSyncBadge('SYNCING', 'Syncing... | 同步更新中...');
+                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatch', dispatchObj.id);
                 await setDoc(dRef, {
                     ...dispatchObj,
                     updatedBy: currentUser.uid,
@@ -1328,8 +1365,8 @@
             saveLocalBackup();
             if (!isCloudReady || !currentUser || !db) return;
             try {
-                updateSyncBadge('SYNCING', 'Deleting Dispatch... | 刪除派工紀錄...');
-                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatches', dispatchId);
+                updateSyncBadge('SYNCING', 'Syncing... | 同步刪除中...');
+                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatch', dispatchId);
                 await deleteDoc(dRef);
                 updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
             } catch (err) {
@@ -1361,12 +1398,11 @@
             };
             appSettings = JSON.parse(JSON.stringify(defaultSettings));
             projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
-            dailyDispatches = JSON.parse(JSON.stringify(DEFAULT_DISPATCHES));
+            dispatchLogs = JSON.parse(JSON.stringify(DEFAULT_DISPATCH_LOGS));
             simulatedExtraStaff = 0;
 
             saveLocalBackup();
             syncSettingsToInputs();
-            renderRulesSummary();
             recalculateAll(false);
 
             if (isCloudReady && currentUser && db) {
@@ -1378,8 +1414,8 @@
                     const pRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_projects', p.id);
                     batch.set(pRef, { ...p, updatedAt: Date.now() - idx * 100 });
                 });
-                DEFAULT_DISPATCHES.forEach((d) => {
-                    const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatches', d.id);
+                DEFAULT_DISPATCH_LOGS.forEach(d => {
+                    const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_daily_dispatch', d.id);
                     batch.set(dRef, { ...d, updatedAt: Date.now() });
                 });
                 await batch.commit();
@@ -1448,25 +1484,13 @@
                 }
             });
 
-            renderRulesSummary();
             await persistSettingsToCloud();
             recalculateAll(true);
             showToast('Sizing rules updated | 換算規則已更新');
         };
 
-        function renderRulesSummary() {
-            const r = appSettings.rules;
-            const summaryEl = document.getElementById('rules-summary');
-            summaryEl.innerHTML = `
-                <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">Onsite 駐廠: <strong class="text-white">${r.onsite}</strong></span>
-                <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">1-Tool 單台: <strong class="text-white">${r.single}</strong></span>
-                <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">2-Tool 雙台: <strong class="text-white">${r.double}</strong></span>
-                <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700">Large 大型: <strong class="text-white">${r.large}</strong></span>
-            `;
-        }
-
         // =====================================================================
-        // 4. 核心容量計算與主動預警雷達引擎 (Capacity & Auto-Aware Engine)
+        // 4. 核心容量計算與主動預警雷達引擎 (含專案 + 每日現場派工聯動)
         // =====================================================================
         window.recalculateAll = function (playAlertIfEscalated = false) {
             const includePending = document.getElementById('toggle-include-pending').checked;
@@ -1474,7 +1498,6 @@
             const baseOps = appSettings.baseOps;
             const flexPool = Math.max(0, effectiveStaff - baseOps);
 
-            // 掃描區間：2026-11-01 至 2027-03-31 的所有工作日 (Mon-Fri)
             const startRange = new Date('2026-11-01T00:00:00');
             const endRange = new Date('2027-03-31T00:00:00');
             const results = [];
@@ -1487,7 +1510,7 @@
 
             for (let d = new Date(startRange); d <= endRange; d.setDate(d.getDate() + 1)) {
                 const dayOfWeek = d.getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue; // 略過週末
+                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
 
                 const iso = d.toISOString().split('T')[0];
                 const activeProjs = projects.filter(p => {
@@ -1495,7 +1518,7 @@
                     return iso >= p.startDate && iso <= p.endDate;
                 });
 
-                const activeDispatches = dailyDispatches.filter(item => item.date === iso);
+                const activeDispatches = dispatchLogs.filter(log => log.date === iso);
 
                 const projDemand = activeProjs.reduce((acc, p) => acc + (Number(p.headcount) || 0), 0);
                 const dispatchDemand = activeDispatches.reduce((acc, item) => acc + (Number(item.headcount) || 0), 0);
@@ -1530,8 +1553,7 @@
             dailyCalculations = results;
             const avgUtil = sumSupply > 0 ? Math.round((sumDemand / sumSupply) * 100) : 0;
 
-            // 診斷人力缺口等級
-            let level = 'HEALTHY'; // HEALTHY | PEAK_SUPPORT | STRUCTURAL_HIRING
+            let level = 'HEALTHY';
             let recommendedHire = 0;
 
             if (overloadDays >= appSettings.thresholdDays || avgUtil >= appSettings.thresholdUtil) {
@@ -1557,236 +1579,36 @@
 
             updateKPICards();
             updateAutoAwareBanner(playAlertIfEscalated);
-            renderMonthlyDispatchTable();
             renderTimelineChart();
             renderDayInspector(selectedDateStr);
-            renderProjectTable();
-        };
-
-        // =====================================================================
-        // 4.5 每月每日現場派工與叫修行程表渲染與操作
-        // =====================================================================
-        window.changeDispatchMonth = function (delta) {
-            const picker = document.getElementById('dispatch-month-picker');
-            const [y, m] = (picker.value || selectedDispatchMonth).split('-').map(Number);
-            const dt = new Date(y, m - 1 + delta, 1);
-            const nextStr = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
-            picker.value = nextStr;
-            selectedDispatchMonth = nextStr;
             renderMonthlyDispatchTable();
-        };
-
-        window.onDispatchMonthChange = function () {
-            const picker = document.getElementById('dispatch-month-picker');
-            if (picker && picker.value) {
-                selectedDispatchMonth = picker.value;
-                renderMonthlyDispatchTable();
-            }
-        };
-
-        function renderMonthlyDispatchTable() {
-            const tbody = document.getElementById('monthly-dispatch-tbody');
-            if (!tbody) return;
-
-            const picker = document.getElementById('dispatch-month-picker');
-            if (picker && picker.value) {
-                selectedDispatchMonth = picker.value;
-            }
-
-            const [year, month] = selectedDispatchMonth.split('-').map(Number);
-            const daysInMonth = new Date(year, month, 0).getDate();
-            const weekdayLabels = ['Sun 日', 'Mon 一', 'Tue 二', 'Wed 三', 'Thu 四', 'Fri 五', 'Sat 六'];
-            const includePending = document.getElementById('toggle-include-pending')?.checked;
-            const effectiveStaff = appSettings.totalStaff + simulatedExtraStaff;
-
-            const rowsHtml = [];
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dt = new Date(year, month - 1, day);
-                const dow = dt.getDay();
-                const isWeekend = (dow === 0 || dow === 6);
-
-                const dayLogs = dailyDispatches.filter(item => item.date === dateStr);
-
-                // 計算當日總人力負荷狀態
-                const activeProjs = projects.filter(p => {
-                    if (!includePending && p.status !== 'Confirmed') return false;
-                    return dateStr >= p.startDate && dateStr <= p.endDate;
-                });
-                const projDemand = activeProjs.reduce((sum, p) => sum + (Number(p.headcount) || 0), 0);
-                const dispatchDemand = dayLogs.reduce((sum, item) => sum + (Number(item.headcount) || 0), 0);
-                const totalDemand = (isWeekend ? 0 : appSettings.baseOps) + projDemand + dispatchDemand;
-                const balance = effectiveStaff - totalDemand;
-
-                let loadBadge = '';
-                if (isWeekend && totalDemand === 0) {
-                    loadBadge = `<span class="text-[11px] text-slate-600">Weekend | 週末</span>`;
-                } else if (balance < 0) {
-                    loadBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">${totalDemand}/${effectiveStaff} (缺${Math.abs(balance)})</span>`;
-                } else if (balance === 0) {
-                    loadBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">${totalDemand}/${effectiveStaff} 滿載</span>`;
-                } else {
-                    loadBadge = `<span class="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${totalDemand}/${effectiveStaff} (餘${balance})</span>`;
-                }
-
-                const rowBg = isWeekend ? 'bg-slate-950/50 text-slate-500' : 'hover:bg-slate-800/40';
-
-                if (dayLogs.length === 0) {
-                    rowsHtml.push(`
-                        <tr class="${rowBg} transition">
-                            <td class="py-2 px-3.5 whitespace-nowrap font-mono">
-                                <span class="${isWeekend ? 'text-slate-500' : 'text-slate-200 font-semibold'}">${dateStr}</span>
-                                <span class="ml-1.5 text-[11px] ${isWeekend ? 'text-rose-400/60' : 'text-slate-400'}">(${weekdayLabels[dow]})</span>
-                            </td>
-                            <td class="py-2 px-3.5 text-slate-600 italic">—</td>
-                            <td class="py-2 px-3.5 text-slate-600 italic">No field dispatch logged | 尚無現場派工紀錄</td>
-                            <td class="py-2 px-3.5 text-slate-600">—</td>
-                            <td class="py-2 px-3.5 text-center whitespace-nowrap">${loadBadge}</td>
-                            <td class="py-2 px-3.5 text-right whitespace-nowrap">
-                                <button onclick="openDailyDispatchModal(null, '${dateStr}')" class="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer">
-                                    + Log | 登記
-                                </button>
-                            </td>
-                        </tr>
-                    `);
-                } else {
-                    dayLogs.forEach((log, idx) => {
-                        rowsHtml.push(`
-                            <tr class="${isWeekend ? 'bg-slate-950/60' : 'bg-slate-900/60'} hover:bg-slate-800/50 transition">
-                                <td class="py-2.5 px-3.5 whitespace-nowrap font-mono">
-                                    ${idx === 0 ? `<span class="text-white font-bold">${dateStr}</span> <span class="ml-1 text-[11px] text-slate-400">(${weekdayLabels[dow]})</span>` : `<span class="text-slate-600 text-[11px] pl-4">↳ 同日</span>`}
-                                </td>
-                                <td class="py-2.5 px-3.5 whitespace-nowrap">
-                                    <span class="px-2 py-0.5 rounded-md font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">${log.fab}</span>
-                                </td>
-                                <td class="py-2.5 px-3.5 text-slate-200 font-medium">
-                                    ${log.description}
-                                </td>
-                                <td class="py-2.5 px-3.5 whitespace-nowrap">
-                                    <span class="font-semibold text-emerald-300">${log.assignee}</span>
-                                    <span class="ml-1.5 px-1.5 py-0.5 rounded bg-slate-800 text-[11px] text-slate-300 font-mono">${log.headcount}人</span>
-                                </td>
-                                <td class="py-2.5 px-3.5 text-center whitespace-nowrap">
-                                    ${idx === 0 ? loadBadge : ''}
-                                </td>
-                                <td class="py-2.5 px-3.5 text-right whitespace-nowrap">
-                                    <div class="inline-flex items-center gap-1">
-                                        <button onclick="openDailyDispatchModal(null, '${dateStr}')" class="p-1 rounded bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition cursor-pointer" title="Add another item on this day | 同日再新增一筆">
-                                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                        <button onclick="openDailyDispatchModal('${log.id}')" class="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer" title="Edit | 編輯">
-                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                        <button onclick="deleteDailyDispatch('${log.id}')" class="p-1 rounded bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white transition cursor-pointer" title="Delete | 刪除">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `);
-                    });
-                }
-            }
-
-            tbody.innerHTML = rowsHtml.join('');
-            lucide.createIcons();
-        }
-
-        window.openDailyDispatchModal = function (editId = null, prefillDate = null) {
-            const modal = document.getElementById('dispatch-modal');
-            const title = document.getElementById('modal-dispatch-title');
-
-            if (editId) {
-                const item = dailyDispatches.find(d => d.id === editId);
-                if (!item) return;
-                title.textContent = 'Edit Daily Dispatch & Issue | 編輯每日現場派工紀錄';
-                document.getElementById('dispatch-id').value = item.id;
-                document.getElementById('dispatch-date').value = item.date;
-                document.getElementById('dispatch-fab').value = item.fab;
-                document.getElementById('dispatch-desc').value = item.description;
-                document.getElementById('dispatch-assignee').value = item.assignee;
-                document.getElementById('dispatch-headcount').value = item.headcount;
-            } else {
-                title.textContent = 'Add Daily Field Dispatch & Issue | 登記每日現場派工與異常';
-                document.getElementById('dispatch-form').reset();
-                document.getElementById('dispatch-id').value = '';
-                document.getElementById('dispatch-date').value = prefillDate || `${selectedDispatchMonth}-01`;
-                document.getElementById('dispatch-headcount').value = 1;
-            }
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        };
-
-        window.closeDailyDispatchModal = function () {
-            const modal = document.getElementById('dispatch-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        };
-
-        window.saveDailyDispatch = async function (e) {
-            e.preventDefault();
-            const id = document.getElementById('dispatch-id').value;
-            const dateVal = document.getElementById('dispatch-date').value;
-            const payload = {
-                id: id || 'disp_' + Date.now(),
-                date: dateVal,
-                fab: document.getElementById('dispatch-fab').value.trim(),
-                description: document.getElementById('dispatch-desc').value.trim(),
-                assignee: document.getElementById('dispatch-assignee').value.trim(),
-                headcount: Math.max(0, parseInt(document.getElementById('dispatch-headcount').value) || 0)
-            };
-
-            if (id) {
-                const idx = dailyDispatches.findIndex(d => d.id === id);
-                if (idx !== -1) dailyDispatches[idx] = payload;
-            } else {
-                dailyDispatches.push(payload);
-            }
-
-            if (dateVal && dateVal.length >= 7) {
-                selectedDispatchMonth = dateVal.slice(0, 7);
-                const picker = document.getElementById('dispatch-month-picker');
-                if (picker) picker.value = selectedDispatchMonth;
-            }
-
-            closeDailyDispatchModal();
-            recalculateAll(true);
-            await persistDispatchToCloud(payload);
-            showToast(`Dispatch saved: ${payload.fab} (${payload.assignee}) | 每日派工已儲存同步`);
-        };
-
-        window.deleteDailyDispatch = async function (id) {
-            dailyDispatches = dailyDispatches.filter(d => d.id !== id);
-            recalculateAll(true);
-            await deleteDispatchFromCloud(id);
-            showToast('Dispatch record deleted | 已刪除派工紀錄');
+            renderProjectTable();
         };
 
         function updateKPICards() {
             const a = currentAnalysis;
             document.getElementById('kpi-flex-pool').textContent = a.flexPool;
-            document.getElementById('kpi-flex-sub').textContent = `Supply ${a.effectiveStaff} - Base ${a.baseOps} | 總供給 ${a.effectiveStaff} - 保底 ${a.baseOps}`;
+            document.getElementById('kpi-flex-sub').textContent = `${a.effectiveStaff} 總編制 - ${a.baseOps} 保底`;
 
             const deficitEl = document.getElementById('kpi-max-deficit');
             deficitEl.textContent = a.maxDeficit < 0 ? a.maxDeficit : '0';
-            deficitEl.className = a.maxDeficit < 0 ? 'text-xl font-bold text-rose-400' : 'text-xl font-bold text-emerald-400';
+            deficitEl.className = a.maxDeficit < 0 ? 'text-lg font-bold text-rose-400' : 'text-lg font-bold text-emerald-400';
             document.getElementById('kpi-max-deficit-date').textContent = a.maxDeficit < 0
-                ? `Peak: ${a.maxDeficitDate}`
-                : 'No deficit';
+                ? `${a.maxDeficitDate}`
+                : '無人力缺口';
 
             const overloadEl = document.getElementById('kpi-overload-days');
             overloadEl.textContent = a.overloadDays;
             overloadEl.className = a.overloadDays >= appSettings.thresholdDays
-                ? 'text-xl font-bold text-rose-400'
-                : (a.overloadDays > 0 ? 'text-xl font-bold text-amber-400' : 'text-xl font-bold text-emerald-400');
-            document.getElementById('kpi-overload-sub').textContent = `Threshold: ${appSettings.thresholdDays}d`;
+                ? 'text-lg font-bold text-rose-400'
+                : (a.overloadDays > 0 ? 'text-lg font-bold text-amber-400' : 'text-lg font-bold text-emerald-400');
+            document.getElementById('kpi-overload-sub').textContent = `門檻 ${appSettings.thresholdDays} 天`;
 
             const utilEl = document.getElementById('kpi-avg-util');
             utilEl.textContent = `${a.avgUtil}%`;
             utilEl.className = a.avgUtil >= appSettings.thresholdUtil
-                ? 'text-xl font-bold text-rose-400'
-                : (a.avgUtil >= 75 ? 'text-xl font-bold text-amber-400' : 'text-xl font-bold text-emerald-400');
+                ? 'text-lg font-bold text-rose-400'
+                : (a.avgUtil >= 75 ? 'text-lg font-bold text-amber-400' : 'text-lg font-bold text-emerald-400');
         }
 
         function updateAutoAwareBanner(playAlertIfEscalated) {
@@ -1798,7 +1620,6 @@
             const desc = document.getElementById('radar-description');
             const causesEl = document.getElementById('radar-root-causes');
 
-            // 更新 What-If 按鈕樣式
             [0, 1, 2].forEach(n => {
                 const btn = document.getElementById(`sim-btn-${n}`);
                 if (simulatedExtraStaff === n) {
@@ -1808,43 +1629,43 @@
                 }
             });
             document.getElementById('sim-badge').textContent = simulatedExtraStaff > 0
-                ? `+${simulatedExtraStaff} Staff 模擬中`
+                ? `+${simulatedExtraStaff} Staff`
                 : 'Baseline';
             document.getElementById('sim-feedback').textContent = simulatedExtraStaff > 0
-                ? `With +${simulatedExtraStaff}: ${a.overloadDays} overload days, ${a.avgUtil}% util.`
-                : 'Click +1 or +2 to verify overload reduction.';
+                ? `+${simulatedExtraStaff} 人後：超載 ${a.overloadDays} 天、負載 ${a.avgUtil}%`
+                : 'Click +1 or +2 to simulate extra staff.';
 
             const onsiteProjects = projects.filter(p => p.sizeType === 'onsite' && (a.includePending || p.status === 'Confirmed'));
             const causeTags = [];
             if (onsiteProjects.length > 0) {
-                causeTags.push(`<span class="px-2 py-0.5 rounded-md bg-slate-800/90 text-amber-300 border border-amber-500/30 text-[10px]">Onsite Lock-in: ${onsiteProjects[0].customer} (-${onsiteProjects[0].headcount} flex)</span>`);
+                causeTags.push(`<span class="px-2 py-0.5 rounded bg-slate-800/90 text-amber-300 border border-amber-500/30 text-[10px]">Onsite: ${onsiteProjects[0].customer} (-${onsiteProjects[0].headcount} flex)</span>`);
             }
             if (a.maxDeficit < 0) {
-                causeTags.push(`<span class="px-2 py-0.5 rounded-md bg-slate-800/90 text-rose-300 border border-rose-500/30 text-[10px]">Peak Overlap: ${a.maxDeficitDate} (${a.maxDeficit} staff)</span>`);
+                causeTags.push(`<span class="px-2 py-0.5 rounded bg-slate-800/90 text-rose-300 border border-rose-500/30 text-[10px]">Peak: ${a.maxDeficitDate} (${a.maxDeficit} staff)</span>`);
             }
             causesEl.innerHTML = causeTags.join('');
 
             if (a.level === 'STRUCTURAL_HIRING') {
                 banner.className = 'rounded-xl border p-3 transition-all duration-300 bg-rose-950/30 border-rose-500/60 alert-pulse-red';
-                iconBox.className = 'p-2 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/40 shrink-0';
+                iconBox.className = 'p-2 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/40 shrink-0 mt-0.5';
                 badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40';
-                badge.textContent = 'CRITICAL: HIRING RECOMMENDED | 結構性長期缺人預警';
-                title.textContent = `Recommend Hiring +${a.recommendedHire} Full-Time Engineer(s) | 建議啟動增聘 +${a.recommendedHire} 名正職工程師`;
-                desc.innerHTML = `Detected <strong>${a.overloadDays} overloaded workdays</strong> (exceeds ${appSettings.thresholdDays}-day threshold) and <strong>${a.avgUtil}% avg utilization</strong> while maintaining the ${a.baseOps}-engineer operations floor.`;
+                badge.textContent = 'CRITICAL: HIRING RECOMMENDED';
+                title.textContent = `Recommend Hiring +${a.recommendedHire} FTE | 建議增聘 +${a.recommendedHire} 名正職工程師`;
+                desc.textContent = `Detected ${a.overloadDays} overloaded workdays (threshold: ${appSettings.thresholdDays}d) & ${a.avgUtil}% avg util while keeping ${a.baseOps}-staff base ops floor.`;
             } else if (a.level === 'PEAK_SUPPORT') {
                 banner.className = 'rounded-xl border p-3 transition-all duration-300 bg-amber-950/25 border-amber-500/50';
-                iconBox.className = 'p-2 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 shrink-0';
+                iconBox.className = 'p-2 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 shrink-0 mt-0.5';
                 badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40';
-                badge.textContent = 'WARNING: PEAK OVERLAP | 短期波峰撞期預警';
-                title.textContent = `Request +${Math.abs(a.maxDeficit)} Temporary Support Engineer(s) | 建議申請短期支援 +${Math.abs(a.maxDeficit)} 人`;
-                desc.innerHTML = `Overall capacity is balanced (${a.avgUtil}% avg utilization), but <strong>${a.overloadDays} workday(s)</strong> experience overlaps peaking on <strong>${a.maxDeficitDate}</strong>.`;
+                badge.textContent = 'WARNING: PEAK OVERLAP';
+                title.textContent = `Request +${Math.abs(a.maxDeficit)} Support Engineer(s) | 建議申請短期支援 +${Math.abs(a.maxDeficit)} 人`;
+                desc.textContent = `Avg utilization is ${a.avgUtil}%, with ${a.overloadDays} peak overlap workday(s) peaking on ${a.maxDeficitDate}.`;
             } else {
                 banner.className = 'rounded-xl border p-3 transition-all duration-300 bg-emerald-950/20 border-emerald-500/40';
-                iconBox.className = 'p-2 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0';
+                iconBox.className = 'p-2 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0 mt-0.5';
                 badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
-                badge.textContent = 'HEALTHY CAPACITY | 人力配置健康充足';
-                title.textContent = `All Scheduled Projects & Dispatches Covered (${a.avgUtil}% Avg Util) | 所有已確認排程與派工人力充足`;
-                desc.innerHTML = `Your ${a.baseOps}-engineer Taiwan operations floor and all scheduled tasks are fully covered with zero overload days.`;
+                badge.textContent = 'HEALTHY CAPACITY';
+                title.textContent = `Capacity Covered (${a.avgUtil}% Avg Util) | 目前已確認排程與派工人力充足`;
+                desc.textContent = `Your ${a.baseOps}-engineer operations floor and all confirmed projects/dispatches are covered with 0 overload days.`;
             }
 
             if (playAlertIfEscalated && a.level !== 'HEALTHY' && lastAlertLevel !== a.level && audioAlertEnabled) {
@@ -1874,7 +1695,7 @@
                 return `
                     <div onclick="selectTimelineDay('${day.date}')"
                          title="${day.date} | Demand: ${day.totalDemand} / Supply: ${day.supply} (${day.balance >= 0 ? '+' + day.balance : day.balance})"
-                         class="flex-1 min-w-[6px] h-full flex flex-col justify-end cursor-pointer group">
+                         class="flex-1 min-w-[5px] h-full flex flex-col justify-end cursor-pointer">
                         <div style="height: ${heightPct}%" class="w-full rounded-t-sm transition-all ${barColor} ${ringClass}"></div>
                     </div>
                 `;
@@ -1905,67 +1726,284 @@
 
             if (dayObj.balance < 0) {
                 balEl.textContent = `${dayObj.balance} 人`;
-                balEl.className = 'text-sm font-bold text-rose-400 mt-0.5';
-                badgeEl.textContent = `Deficit ${dayObj.balance} | 缺口 ${Math.abs(dayObj.balance)} 人`;
-                badgeEl.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
+                balEl.className = 'text-rose-400';
+                badgeEl.textContent = `缺口 ${Math.abs(dayObj.balance)} 人`;
+                badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
             } else if (dayObj.balance === 0) {
                 balEl.textContent = '0 人';
-                balEl.className = 'text-sm font-bold text-amber-400 mt-0.5';
-                badgeEl.textContent = '100% Full | 滿載無餘裕';
-                badgeEl.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                balEl.className = 'text-amber-400';
+                badgeEl.textContent = '滿載';
+                badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
             } else {
                 balEl.textContent = `+${dayObj.balance} 人`;
-                balEl.className = 'text-sm font-bold text-emerald-400 mt-0.5';
-                badgeEl.textContent = `Surplus +${dayObj.balance} | 餘裕 ${dayObj.balance} 人`;
-                badgeEl.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                balEl.className = 'text-emerald-400';
+                badgeEl.textContent = `餘裕 +${dayObj.balance}`;
+                badgeEl.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
             }
 
             const listEl = document.getElementById('inspector-project-list');
             const itemsHtml = [
-                `<div class="flex items-center justify-between bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs">
-                    <span class="text-slate-300">Taiwan Base Operations Floor <span class="text-slate-500">| 台灣基本營運保底</span></span>
+                `<div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded px-2 py-1">
+                    <span class="text-slate-300">營運保底 Base Ops</span>
                     <span class="font-bold text-amber-400">${dayObj.baseOps} 人</span>
                 </div>`
             ];
 
             dayObj.activeProjs.forEach(p => {
-                const statusColor = p.status === 'Confirmed' ? 'text-emerald-400' : (p.status === 'Pending' ? 'text-amber-300' : 'text-purple-300');
                 itemsHtml.push(`
-                    <div class="flex items-center justify-between bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs gap-2">
-                        <div class="truncate">
-                            <span class="font-semibold text-white">${p.customer}</span>
-                            <span class="text-[10px] ${statusColor} ml-1">[${p.status}]</span>
-                            <div class="text-[11px] text-slate-400 truncate">${p.name}</div>
-                        </div>
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded px-2 py-1 gap-1">
+                        <span class="truncate text-slate-200"><strong>${p.customer}</strong>: ${p.name}</span>
                         <span class="font-bold text-blue-400 shrink-0">+${p.headcount} 人</span>
                     </div>
                 `);
             });
 
-            if (dayObj.activeDispatches && dayObj.activeDispatches.length > 0) {
-                dayObj.activeDispatches.forEach(d => {
-                    itemsHtml.push(`
-                        <div class="flex items-center justify-between bg-slate-950/80 border border-emerald-500/30 rounded-lg px-2.5 py-1.5 text-xs gap-2">
-                            <div class="truncate">
-                                <span class="font-semibold text-emerald-300">${d.fab}</span>
-                                <span class="text-[10px] text-slate-400 ml-1">[Daily Dispatch: ${d.assignee}]</span>
-                                <div class="text-[11px] text-slate-400 truncate">${d.description}</div>
-                            </div>
-                            <span class="font-bold text-emerald-400 shrink-0">+${d.headcount} 人</span>
-                        </div>
-                    `);
-                });
-            }
-
-            if (!currentAnalysis?.includePending) {
-                itemsHtml.push(`<div class="text-[10px] text-slate-500 italic px-1 pt-1">* Unconfirmed (Pending/Planning) projects are currently excluded. | 尚未確認之專案目前未排入人力需求表。</div>`);
-            }
+            (dayObj.activeDispatches || []).forEach(d => {
+                itemsHtml.push(`
+                    <div class="flex items-center justify-between bg-emerald-950/30 border border-emerald-800/50 rounded px-2 py-1 gap-1">
+                        <span class="truncate text-emerald-200"><strong>[派工] ${d.fab}</strong> (${d.assignee})</span>
+                        <span class="font-bold text-emerald-400 shrink-0">+${d.headcount} 人</span>
+                    </div>
+                `);
+            });
 
             listEl.innerHTML = itemsHtml.join('');
         }
 
         // =====================================================================
-        // 6. 專案清單表格渲染與協作操作 (Table Rendering & Actions)
+        // 6. 每月每日現場派工與叫修行程表 (Monthly Daily Dispatch Table & Mobile)
+        // =====================================================================
+        window.changeDispatchMonth = function (delta) {
+            const picker = document.getElementById('dispatch-month-picker');
+            const [y, m] = (picker.value || '2026-11').split('-').map(Number);
+            const d = new Date(y, m - 1 + delta, 1);
+            const nextVal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            picker.value = nextVal;
+            selectedDispatchMonth = nextVal;
+            renderMonthlyDispatchTable();
+        };
+
+        window.onDispatchMonthChange = function () {
+            const picker = document.getElementById('dispatch-month-picker');
+            if (picker.value) {
+                selectedDispatchMonth = picker.value;
+                renderMonthlyDispatchTable();
+            }
+        };
+
+        function renderMonthlyDispatchTable() {
+            const tbody = document.getElementById('monthly-dispatch-tbody');
+            const mobileList = document.getElementById('monthly-dispatch-mobile-list');
+            if (!tbody) return;
+
+            const [yearStr, monthStr] = selectedDispatchMonth.split('-');
+            const year = parseInt(yearStr, 10);
+            const month = parseInt(monthStr, 10);
+            if (!year || !month) return;
+
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const weekdayNames = ['Sun 週日', 'Mon 週一', 'Tue 週二', 'Wed 週三', 'Thu 週四', 'Fri 週五', 'Sat 週六'];
+            const shortWeekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const rowsHtml = [];
+            const mobileCardsHtml = [];
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dd = String(day).padStart(2, '0');
+                const mm = String(month).padStart(2, '0');
+                const dateStr = `${year}-${mm}-${dd}`;
+                const dateObj = new Date(`${dateStr}T00:00:00`);
+                const dow = dateObj.getDay();
+                const isWeekend = (dow === 0 || dow === 6);
+
+                const dayLogs = dispatchLogs.filter(item => item.date === dateStr);
+                const dayCalc = dailyCalculations.find(c => c.date === dateStr);
+
+                let loadBadge = `<span class="text-xs text-slate-500">Weekend 週末</span>`;
+                let mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-800 text-slate-400">Weekend 週末</span>`;
+                if (!isWeekend && dayCalc) {
+                    if (dayCalc.balance < 0) {
+                        loadBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">${dayCalc.totalDemand}/${dayCalc.supply} (缺 ${Math.abs(dayCalc.balance)})</span>`;
+                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">${dayCalc.totalDemand}/${dayCalc.supply} 缺${Math.abs(dayCalc.balance)}</span>`;
+                    } else if (dayCalc.balance === 0) {
+                        loadBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">${dayCalc.totalDemand}/${dayCalc.supply} (滿載)</span>`;
+                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">${dayCalc.totalDemand}/${dayCalc.supply} 滿載</span>`;
+                    } else {
+                        loadBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${dayCalc.totalDemand}/${dayCalc.supply} (餘 ${dayCalc.balance})</span>`;
+                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${dayCalc.totalDemand}/${dayCalc.supply} 餘${dayCalc.balance}</span>`;
+                    }
+                }
+
+                const rowBg = isWeekend ? 'bg-slate-950/50 text-slate-500' : 'hover:bg-slate-800/40';
+
+                if (dayLogs.length === 0) {
+                    rowsHtml.push(`
+                        <tr class="${rowBg} transition">
+                            <td class="py-2.5 px-4 font-mono text-xs whitespace-nowrap">
+                                <span class="${isWeekend ? 'text-slate-500' : 'text-white font-semibold'}">${dateStr}</span>
+                                <span class="block text-[11px] ${isWeekend ? 'text-slate-600' : 'text-slate-400'}">${weekdayNames[dow]}</span>
+                            </td>
+                            <td class="py-2.5 px-4 text-xs text-slate-600 italic">—</td>
+                            <td class="py-2.5 px-4 text-xs text-slate-600 italic">No issue / dispatch logged | 無特別派工紀錄</td>
+                            <td class="py-2.5 px-4 text-xs text-slate-600">—</td>
+                            <td class="py-2.5 px-4 text-center whitespace-nowrap">${loadBadge}</td>
+                            <td class="py-2.5 px-4 text-right whitespace-nowrap">
+                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white border border-slate-700 transition cursor-pointer">
+                                    + Add | 填寫
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+
+                    mobileCardsHtml.push(`
+                        <div class="p-3 flex items-center justify-between gap-2 ${isWeekend ? 'bg-slate-950/40 opacity-75' : ''}">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono text-xs font-bold ${isWeekend ? 'text-slate-400' : 'text-white'}">${dateStr} (${shortWeekdays[dow]})</span>
+                                    ${mobileLoadBadge}
+                                </div>
+                                <p class="text-[11px] text-slate-500 mt-0.5 truncate">No issue / dispatch logged | 無派工紀錄</p>
+                            </div>
+                            <button onclick="openDailyDispatchModal('${dateStr}')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 active:bg-emerald-600 text-slate-200 border border-slate-700">
+                                + 填寫
+                            </button>
+                        </div>
+                    `);
+                } else {
+                    dayLogs.forEach((log, idx) => {
+                        rowsHtml.push(`
+                            <tr class="bg-emerald-950/10 hover:bg-slate-800/50 transition">
+                                <td class="py-2.5 px-4 font-mono text-xs whitespace-nowrap">
+                                    ${idx === 0 ? `<span class="text-white font-semibold">${dateStr}</span><span class="block text-[11px] text-slate-400">${weekdayNames[dow]}</span>` : `<span class="text-slate-600">↳ 同日多筆</span>`}
+                                </td>
+                                <td class="py-2.5 px-4 whitespace-nowrap">
+                                    <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">${log.fab}</span>
+                                </td>
+                                <td class="py-2.5 px-4 text-slate-200 text-xs sm:text-sm">${log.description}</td>
+                                <td class="py-2.5 px-4 whitespace-nowrap">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-semibold text-emerald-300 text-xs">${log.assignee}</span>
+                                        <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-xs font-bold">${log.headcount} 人</span>
+                                    </div>
+                                </td>
+                                <td class="py-2.5 px-4 text-center whitespace-nowrap">${idx === 0 ? loadBadge : ''}</td>
+                                <td class="py-2.5 px-4 text-right whitespace-nowrap">
+                                    <div class="inline-flex items-center gap-1">
+                                        <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer" title="Edit | 編輯">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        <button onclick="deleteDailyDispatch('${log.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-400 hover:text-white transition cursor-pointer" title="Delete | 刪除">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        ${idx === 0 ? `<button onclick="openDailyDispatchModal('${dateStr}')" class="px-2 py-1 rounded-lg text-xs bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white transition cursor-pointer" title="Add another | 同日再新增">+</button>` : ''}
+                                    </div>
+                                </td>
+                            </tr>
+                        `);
+
+                        mobileCardsHtml.push(`
+                            <div class="p-3.5 bg-emerald-950/15 space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="font-mono text-xs font-bold text-white">${dateStr} (${shortWeekdays[dow]})</span>
+                                        <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">${log.fab}</span>
+                                        ${idx === 0 ? mobileLoadBadge : ''}
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        <button onclick="deleteDailyDispatch('${log.id}')" class="p-1.5 rounded-lg bg-slate-800 text-rose-400 border border-slate-700">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-200 leading-relaxed">${log.description}</p>
+                                <div class="flex items-center justify-between text-xs pt-1">
+                                    <span class="text-emerald-300 font-semibold">👤 ${log.assignee} (${log.headcount} 人)</span>
+                                    <button onclick="openDailyDispatchModal('${dateStr}')" class="text-[11px] text-blue-400 underline">+ 同日新增</button>
+                                </div>
+                            </div>
+                        `);
+                    });
+                }
+            }
+
+            tbody.innerHTML = rowsHtml.join('');
+            if (mobileList) {
+                mobileList.innerHTML = mobileCardsHtml.join('');
+            }
+            lucide.createIcons();
+        }
+
+        window.openDailyDispatchModal = function (dateStr = null, editId = null) {
+            const modal = document.getElementById('dispatch-modal');
+            const title = document.getElementById('modal-dispatch-title');
+
+            if (editId) {
+                const item = dispatchLogs.find(d => d.id === editId);
+                if (!item) return;
+                title.textContent = 'Edit Daily Dispatch | 編輯每日派工與異常';
+                document.getElementById('dispatch-form-id').value = item.id;
+                document.getElementById('dispatch-form-date').value = item.date;
+                document.getElementById('dispatch-form-fab').value = item.fab;
+                document.getElementById('dispatch-form-desc').value = item.description;
+                document.getElementById('dispatch-form-assignee').value = item.assignee;
+                document.getElementById('dispatch-form-headcount').value = item.headcount;
+            } else {
+                title.textContent = 'Daily Field Dispatch & Issue | 每日派工與異常登記';
+                document.getElementById('dispatch-form').reset();
+                document.getElementById('dispatch-form-id').value = '';
+                document.getElementById('dispatch-form-date').value = dateStr || `${selectedDispatchMonth}-01`;
+                document.getElementById('dispatch-form-headcount').value = 1;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeDailyDispatchModal = function () {
+            const modal = document.getElementById('dispatch-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.saveDailyDispatch = async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('dispatch-form-id').value;
+            const payload = {
+                id: id || 'd_' + Date.now(),
+                date: document.getElementById('dispatch-form-date').value,
+                fab: document.getElementById('dispatch-form-fab').value.trim(),
+                description: document.getElementById('dispatch-form-desc').value.trim(),
+                assignee: document.getElementById('dispatch-form-assignee').value.trim(),
+                headcount: Math.max(0, parseInt(document.getElementById('dispatch-form-headcount').value) || 0)
+            };
+
+            if (id) {
+                const idx = dispatchLogs.findIndex(d => d.id === id);
+                if (idx !== -1) dispatchLogs[idx] = payload;
+            } else {
+                dispatchLogs.push(payload);
+            }
+
+            selectedDispatchMonth = payload.date.slice(0, 7);
+            document.getElementById('dispatch-month-picker').value = selectedDispatchMonth;
+
+            closeDailyDispatchModal();
+            recalculateAll(true);
+            await persistDispatchToCloud(payload);
+            showToast(`Dispatch saved: ${payload.fab} (${payload.date}) | 已儲存每日派工`);
+        };
+
+        window.deleteDailyDispatch = async function (id) {
+            dispatchLogs = dispatchLogs.filter(d => d.id !== id);
+            recalculateAll(false);
+            await deleteDispatchFromCloud(id);
+            showToast('Dispatch log deleted | 已刪除該筆派工紀錄');
+        };
+
+        // =====================================================================
+        // 7. 專案清單表格渲染與協作操作
         // =====================================================================
         window.setFilterStatus = function (status) {
             currentFilterStatus = status;
@@ -1982,10 +2020,14 @@
 
         function renderProjectTable() {
             const tbody = document.getElementById('project-table-body');
+            const mobileContainer = document.getElementById('project-mobile-cards');
             const filtered = projects.filter(p => currentFilterStatus === 'ALL' || p.status === currentFilterStatus);
 
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500">No projects in this category | 此分類目前無專案</td></tr>`;
+                if (mobileContainer) {
+                    mobileContainer.innerHTML = `<div class="py-8 text-center text-xs text-slate-500">No projects in this category | 此分類目前無專案</div>`;
+                }
                 return;
             }
 
@@ -2005,21 +2047,21 @@
 
                 return `
                     <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-3 px-4 whitespace-nowrap">${badgeHtml}</td>
-                        <td class="py-3 px-4 font-bold text-white whitespace-nowrap">${p.customer}</td>
-                        <td class="py-3 px-4">
+                        <td class="py-3.5 px-4 whitespace-nowrap">${badgeHtml}</td>
+                        <td class="py-3.5 px-4 font-bold text-white whitespace-nowrap">${p.customer}</td>
+                        <td class="py-3.5 px-4">
                             <div class="font-medium text-slate-200">${p.name}</div>
                             ${p.notes ? `<div class="text-[11px] text-slate-400 mt-0.5">${p.notes}</div>` : ''}
                         </td>
-                        <td class="py-3 px-4 whitespace-nowrap font-mono text-slate-300">
+                        <td class="py-3.5 px-4 whitespace-nowrap font-mono text-slate-300">
                             ${p.startDate} → ${p.endDate}
                         </td>
-                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                        <td class="py-3.5 px-4 text-center whitespace-nowrap">
                             <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">
                                 ${p.headcount} 人
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <td class="py-3.5 px-4 text-right whitespace-nowrap">
                             <div class="inline-flex items-center gap-1.5">
                                 ${confirmBtn}
                                 <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer" title="Edit | 編輯">
@@ -2034,6 +2076,51 @@
                 `;
             }).join('');
 
+            if (mobileContainer) {
+                mobileContainer.innerHTML = filtered.map(p => {
+                    let badgeHtml = '';
+                    if (p.status === 'Confirmed') {
+                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Confirmed | 已確認</span>`;
+                    } else if (p.status === 'Pending') {
+                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Pending | 待確認</span>`;
+                    } else {
+                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">2027 Plan | 規劃中</span>`;
+                    }
+
+                    const confirmBtn = p.status !== 'Confirmed'
+                        ? `<button onclick="promoteToConfirmed('${p.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-600/20 text-emerald-300 border border-emerald-500/30">成案</button>`
+                        : '';
+
+                    return `
+                        <div class="p-3.5 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="font-bold text-sm text-white">${p.customer}</span>
+                                    ${badgeHtml}
+                                </div>
+                                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30 shrink-0">
+                                    ${p.headcount} 人
+                                </span>
+                            </div>
+                            <div class="text-xs font-medium text-slate-200">${p.name}</div>
+                            ${p.notes ? `<div class="text-[11px] text-slate-400">${p.notes}</div>` : ''}
+                            <div class="flex items-center justify-between pt-1">
+                                <span class="font-mono text-[11px] text-slate-400">${p.startDate} → ${p.endDate}</span>
+                                <div class="flex items-center gap-1.5">
+                                    ${confirmBtn}
+                                    <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg bg-slate-800 text-rose-400 border border-slate-700">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
             lucide.createIcons();
         }
 
@@ -2043,7 +2130,7 @@
                 proj.status = 'Confirmed';
                 recalculateAll(true);
                 await persistProjectToCloud(proj);
-                showToast(`Confirmed: ${proj.customer} | 已確認成案並納入人力計算`);
+                showToast(`Confirmed: ${proj.customer} | 已確認成案並計入人力表`);
             }
         };
 
@@ -2055,7 +2142,7 @@
         };
 
         // =====================================================================
-        // 7. 新增/編輯 Modal 控制
+        // 8. 新增/編輯專案 Modal 控制
         // =====================================================================
         window.openProjectModal = function (editId = null) {
             const modal = document.getElementById('project-modal');
@@ -2133,7 +2220,7 @@
         };
 
         // =====================================================================
-        // 8. 雙語支援申請 / 長期增聘招募簽呈自動產生器
+        // 9. 雙語支援申請 / 長期增聘招募簽呈自動產生器
         // =====================================================================
         window.openSupportModal = function () {
             const modal = document.getElementById('support-modal');
@@ -2190,25 +2277,22 @@ To maintain our mandatory ${a.baseOps}-engineer Taiwan daily operations floor wh
 - Average Team Utilization | 平均人力負載率: ${a.avgUtil}%
 - Peak Single-Day Deficit | 單日最大人力缺口: ${a.maxDeficit} Engineers (on ${a.maxDeficitDate})
 
-3. KEY DRIVERS & SCHEDULED PROJECTS | 專案排程明細
-${activeList}
-
-4. IMPACT IF NOT APPROVED | 未增聘之營運風險
-Without permanent headcount expansion, Taiwan Operations will face repeated schedule conflicts during Dec 2026 deinstallations (UMC 8S/8E, TSMC Fab 3) and the Q1 2027 13-tool relocation wave, risking SLA penalties or compromising daily customer support.`;
+3. SCHEDULED PROJECTS | 專案排程明細
+${activeList}`;
             } else {
                 const supportCount = Math.max(1, Math.abs(a.maxDeficit) || 2);
                 draft = `SUBJECT: [Resource Support Request] +${supportCount} Field Engineers for Peak Schedule Overlap | 專案波峰短期支援人力申請單
 
 1. SUPPORT REQUEST OVERVIEW | 支援需求概述
-Due to overlapping customer deinstallation/relocation schedules while maintaining our ${a.baseOps}-engineer Taiwan operations floor, we request +${supportCount} temporary support engineer(s) from HQ / Regional Pool.
-因多項客戶裝拆機專案時程重疊，且需維持台灣區每日 ${a.baseOps} 人基本營運保底，特申請調度 +${supportCount} 名短期支援工程師。
+Due to overlapping customer schedules while maintaining our ${a.baseOps}-engineer Taiwan operations floor, we request +${supportCount} temporary support engineer(s).
+因多項客戶專案時程重疊，且需維持台灣區每日 ${a.baseOps} 人基本營運保底，特申請調度 +${supportCount} 名短期支援工程師。
 
 2. PEAK DEFICIT DATES | 關鍵缺口日期明細
 - Peak Deficit Date | 最高缺口日: ${a.maxDeficitDate} (Shortfall: ${a.maxDeficit} engineers)
 - Total Overloaded Workdays | 總計超載工作天數: ${a.overloadDays} days
 ${sampleDates || '  - No immediate deficit under current filter.'}
 
-3. OVERLAPPING PROJECTS | 重疊專案清單
+3. ACTIVE PROJECTS | 專案清單
 ${activeList}`;
             }
 
@@ -2225,7 +2309,7 @@ ${activeList}`;
         };
 
         // =====================================================================
-        // 9. 音效提示與 CSV 匯出
+        // 10. 音效提示與 CSV 匯出 (含專案 + 每日派工紀錄)
         // =====================================================================
         function triggerAlertTone() {
             try {
@@ -2248,33 +2332,31 @@ ${activeList}`;
             audioAlertEnabled = !audioAlertEnabled;
             const textEl = document.getElementById('notify-status-text');
             if (audioAlertEnabled) {
-                textEl.textContent = 'Alert: ON | 警示開啟';
+                if (textEl) textEl.textContent = 'Alert: ON | 警示開啟';
                 triggerAlertTone();
                 showToast('Audio alert enabled | 已開啟主動警示音效');
             } else {
-                textEl.textContent = 'Alert: OFF | 警示靜音';
+                if (textEl) textEl.textContent = 'Alert: OFF | 警示靜音';
                 showToast('Audio alert muted | 已靜音警示音效');
             }
         };
 
         window.exportCSV = function () {
-            const headers = ['Category', 'ID', 'Status', 'Customer / Fab', 'Description / Scope', 'Assignee', 'Headcount', 'Start Date', 'End Date', 'Notes'];
+            const headers = ['Category', 'Status', 'Customer / Fab', 'Description / Scope', 'Assigned / Size', 'Headcount', 'Start Date', 'End Date', 'Notes'];
             const projRows = projects.map(p => [
                 'Project',
-                p.id,
                 p.status,
                 `"${(p.customer || '').replace(/"/g, '""')}"`,
                 `"${(p.name || '').replace(/"/g, '""')}"`,
-                '""',
+                p.sizeType,
                 p.headcount,
                 p.startDate,
                 p.endDate,
                 `"${(p.notes || '').replace(/"/g, '""')}"`
             ]);
 
-            const dispatchRows = dailyDispatches.map(d => [
+            const dispatchRows = dispatchLogs.map(d => [
                 'Daily Dispatch',
-                d.id,
                 'Logged',
                 `"${(d.fab || '').replace(/"/g, '""')}"`,
                 `"${(d.description || '').replace(/"/g, '""')}"`,
@@ -2282,7 +2364,7 @@ ${activeList}`;
                 d.headcount,
                 d.date,
                 d.date,
-                '""'
+                ''
             ]);
 
             const csvContent = '\uFEFF' + [headers.join(','), ...projRows.map(r => r.join(',')), ...dispatchRows.map(r => r.join(','))].join('\n');
@@ -2294,7 +2376,7 @@ ${activeList}`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast('CSV exported | 已匯出完整專案與每日派工 CSV 報表');
+            showToast('CSV exported (Projects + Daily Dispatches) | 已匯出完整報表');
         };
 
         window.onload = function () {
