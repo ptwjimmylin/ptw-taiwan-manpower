@@ -277,7 +277,6 @@
                         <tr class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
                             <th class="py-2.5 px-4 w-36">Date / Day <span class="block font-normal text-slate-400">日期 / 星期</span></th>
                             <th class="py-2.5 px-4">Daily Field Dispatches (Issue Fab · Description · Assigned Engineer) <span class="block font-normal text-slate-400">當日派工任務明細（廠區 · 異常描述 · 指派工程師）</span></th>
-                            <th class="py-2.5 px-4 w-36 text-center">Day Manpower <span class="block font-normal text-slate-400">當日總負荷狀態</span></th>
                             <th class="py-2.5 px-4 w-28 text-right">Action <span class="block font-normal text-slate-400">新增派工</span></th>
                         </tr>
                     </thead>
@@ -1474,23 +1473,6 @@
                 const dayLogs = dispatchLogs.filter(item => item.date === dateStr);
                 if (onlyDispatched && dayLogs.length === 0) continue;
 
-                const dayCalc = dailyCalculations.find(c => c.date === dateStr);
-
-                let loadBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">Weekend 週末</span>`;
-                let mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">Weekend 週末</span>`;
-                if (!isWeekend && dayCalc) {
-                    if (dayCalc.balance < 0) {
-                        loadBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 border border-rose-200">${dayCalc.totalDemand}/${dayCalc.supply} (缺 ${Math.abs(dayCalc.balance)})</span>`;
-                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700 border border-rose-200">${dayCalc.totalDemand}/${dayCalc.supply} 缺${Math.abs(dayCalc.balance)}</span>`;
-                    } else if (dayCalc.balance === 0) {
-                        loadBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">${dayCalc.totalDemand}/${dayCalc.supply} (滿載)</span>`;
-                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">${dayCalc.totalDemand}/${dayCalc.supply} 滿載</span>`;
-                    } else {
-                        loadBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${dayCalc.totalDemand}/${dayCalc.supply} (餘 ${dayCalc.balance})</span>`;
-                        mobileLoadBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${dayCalc.totalDemand}/${dayCalc.supply} 餘${dayCalc.balance}</span>`;
-                    }
-                }
-
                 const rowBg = isWeekend
                     ? 'bg-slate-50/90 text-slate-400'
                     : (dayLogs.length > 0 ? 'bg-emerald-50/25 hover:bg-emerald-50/40' : 'bg-white hover:bg-slate-50');
@@ -1505,7 +1487,6 @@
                             <td class="py-2.5 px-4 text-xs text-slate-400 italic align-middle">
                                 No issue / dispatch logged | 無特別派工紀錄
                             </td>
-                            <td class="py-2.5 px-4 text-center whitespace-nowrap align-middle">${loadBadge}</td>
                             <td class="py-2.5 px-4 text-right whitespace-nowrap align-middle">
                                 <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-emerald-600 text-slate-700 hover:text-white border border-slate-200 transition cursor-pointer">
                                     + Add | 填寫
@@ -1519,7 +1500,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="font-mono text-xs font-bold ${isWeekend ? 'text-slate-500' : 'text-slate-900'}">${dateStr} (${shortWeekdays[dow]})</span>
-                                    ${mobileLoadBadge}
+                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">Weekend 週末</span>' : ''}
                                 </div>
                                 <p class="text-[11px] text-slate-400 mt-0.5 truncate">No issue / dispatch logged | 無派工紀錄</p>
                             </div>
@@ -1568,7 +1549,6 @@
                                     ${groupedItemsHtml}
                                 </div>
                             </td>
-                            <td class="py-3 px-4 text-center whitespace-nowrap align-top">${loadBadge}</td>
                             <td class="py-3 px-4 text-right whitespace-nowrap align-top">
                                 <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition cursor-pointer">
                                     + 同日新增
@@ -1600,7 +1580,7 @@
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="font-mono text-xs font-bold text-slate-900">${dateStr} (${shortWeekdays[dow]})</span>
-                                    ${mobileLoadBadge}
+                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">Weekend 週末</span>' : ''}
                                 </div>
                                 <button onclick="openDailyDispatchModal('${dateStr}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-600 text-white">
                                     + 新增派工
@@ -1615,7 +1595,7 @@
             }
 
             if (rowsHtml.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 text-sm">No dispatched tasks in this month | 本月目前尚無登記派工</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-slate-400 text-sm">No dispatched tasks in this month | 本月目前尚無登記派工</td></tr>`;
                 if (mobileList) {
                     mobileList.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No dispatched tasks in this month | 本月目前尚無登記派工</div>`;
                 }
