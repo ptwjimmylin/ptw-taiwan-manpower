@@ -789,12 +789,12 @@
         let lastAlertLevel = null;
 
         // =====================================================================
-        // 免設定雲端多人同步引擎 (True Zero-Config Auto-Provisioning Cloud Sync)
-        // 自動向雲端申請真實儲存空間並將同步代碼寫入網址 (?sync=...)，手機/同事打開即同步
+        // 免設定雲端多人同步引擎 (CORS-Safe Zero-Config Cloud Sync via JSONBlob)
+        // 100% 支援 GitHub Pages 跨網域讀寫，自動建立真實雲端空間並附帶 ?sync= 參數
         // =====================================================================
-        const KV_HOST = 'https://kvdb.io';
-        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v4';
-        const LOCAL_STORAGE_SYNC_ID_KEY = 'ptw_taiwan_cloud_bucket_v2';
+        const BLOB_API_BASE = 'https://jsonblob.com/api/jsonBlob';
+        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v5';
+        const LOCAL_STORAGE_SYNC_ID_KEY = 'ptw_taiwan_blob_id_v1';
         const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
         let activeSyncChannel = '';
         let lastSyncedHash = '';
@@ -818,21 +818,43 @@
                 }
             } catch (e) {}
 
-            // 若本機也尚未建立過真實雲端空間，向 kvdb.io 申請一個全新的專屬儲存桶
+            // 若本機尚未建立雲端空間，向 jsonblob.com POST 申請一個支援 CORS 的真實雲端 ID
             if (!activeSyncChannel) {
                 try {
-                    const createRes = await fetch(KV_HOST, { method: 'POST' });
+                    const initialPayload = {
+                        updatedAt: Date.now(),
+                        settings: appSettings,
+                        projects: projects,
+                        dispatchLogs: dispatchLogs
+                    };
+                    const createRes = await fetch(BLOB_API_BASE, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(initialPayload)
+                    });
                     if (createRes.ok) {
-                        const bucketId = (await createRes.text()).trim();
-                        if (bucketId) {
-                            activeSyncChannel = bucketId;
+                        const locHeader = createRes.headers.get('Location') || createRes.headers.get('x-jsonblob');
+                        let blobId = '';
+                        if (locHeader) {
+                            blobId = locHeader.split('/').pop().trim();
+                        }
+                        if (blobId) {
+                            activeSyncChannel = blobId;
+                            lastSyncedHash = JSON.stringify({
+                                settings: initialPayload.settings,
+                                projects: initialPayload.projects,
+                                dispatchLogs: initialPayload.dispatchLogs
+                            });
                             try {
                                 localStorage.setItem(LOCAL_STORAGE_SYNC_ID_KEY, activeSyncChannel);
                             } catch (e) {}
                         }
                     }
                 } catch (e) {
-                    console.warn('Auto bucket creation failed:', e);
+                    console.warn('Auto cloud blob creation failed:', e);
                 }
             }
 
@@ -844,12 +866,14 @@
         }
 
         function getCloudUrl() {
-            return `${KV_HOST}/${encodeURIComponent(activeSyncChannel)}/team_board`;
+            return `${BLOB_API_BASE}/${encodeURIComponent(activeSyncChannel)}`;
         }
 
         window.copyTeamShareLink = function () {
             const shareUrl = new URL(window.location.href);
-            shareUrl.searchParams.set('sync', activeSyncChannel);
+            if (activeSyncChannel) {
+                shareUrl.searchParams.set('sync', activeSyncChannel);
+            }
             const finalStr = shareUrl.toString();
 
             const tempInput = document.createElement('input');
@@ -859,6 +883,31 @@
             document.execCommand('copy');
             document.body.removeChild(tempInput);
             showToast('Copied Team Sync Link! Paste to Mobile/Teams | 已複製同步網址，貼到手機或群組即可同步！');
+        };
+
+        window.setFontSizeScale = function (scale) {
+            const isMobile = window.innerWidth < 768;
+            const sizes = isMobile
+                ? { sm: '13.5px', md: '14.5px', lg: '16.5px' }
+                : { sm: '15px', md: '16.5px', lg: '18.5px' };
+            const labels = { sm: 'Compact | 標準', md: 'Default | 舒適', lg: 'Large | 大字體' };
+            document.documentElement.style.fontSize = sizes[scale] || sizes.md;
+
+            ['sm', 'md', 'lg'].forEach(key => {
+                const btn = document.getElementById(`font-btn-${key}`);
+                if (!btn) return;
+                btn.className = key === scale
+                    ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer'
+                    : 'px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+            });
+
+            try {
+                localStorage.setItem(LOCAL_STORAGE_FONT_KEY, scale);
+            } catch (e) {}
+
+            if (labels[scale]) {
+                showToast(`Display Size: ${labels[scale]}`);
+            }
         };
 
         function initFontSizeScale() {
@@ -878,27 +927,6 @@
                 });
             } catch (e) {}
         }
-
-        // 瀏覽器全螢幕切換控制
-        window.toggleFullScreen = function () {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen().catch(() => {});
-                }
-            }
-        };
-
-        document.addEventListener('fullscreenchange', () => {
-            const label = document.getElementById('fullscreen-btn-text');
-            if (!label) return;
-            if (document.fullscreenElement) {
-                label.innerHTML = 'Exit Fullscreen <span class="text-slate-500">| 離開全螢幕</span>';
-            } else {
-                label.innerHTML = 'Fullscreen <span class="text-slate-500">| 全螢幕</span>';
-            }
-        });
 
         function loadLocalBackup() {
             try {
@@ -962,24 +990,20 @@
                 if (!silent) updateSyncBadge('SYNCING', 'Fetching Team Data... | 讀取最新資料中...');
                 const res = await fetch(`${getCloudUrl()}?t=${Date.now()}`, {
                     method: 'GET',
+                    headers: { 'Accept': 'application/json' },
                     cache: 'no-store'
                 });
 
                 if (res.status === 404) {
-                    // 雲端首次尚無資料，自動把目前資料推送上去初始化
-                    await pushToSharedCloud();
+                    activeSyncChannel = '';
+                    localStorage.removeItem(LOCAL_STORAGE_SYNC_ID_KEY);
+                    await resolveSyncChannel();
                     return;
                 }
 
                 if (!res.ok) throw new Error('HTTP ' + res.status);
 
-                const rawText = await res.text();
-                if (!rawText) {
-                    await pushToSharedCloud();
-                    return;
-                }
-
-                const data = JSON.parse(rawText);
+                const data = await res.json();
                 if (data && data.settings && Array.isArray(data.projects)) {
                     const incomingHash = JSON.stringify({
                         settings: data.settings,
@@ -997,7 +1021,7 @@
                         recalculateAll(false);
                         if (!silent) showToast('Synced latest team data | 已同步最新團隊資料');
                     }
-                    updateSyncBadge('LIVE', `Live Team Sync ON (${activeSyncChannel}) | 雲端多人即時同步中`);
+                    updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
                 }
             } catch (err) {
                 console.warn('Cloud pull fallback to local:', err);
@@ -1010,9 +1034,9 @@
             saveLocalBackup();
             if (!activeSyncChannel) {
                 await resolveSyncChannel();
-            }
-            if (!activeSyncChannel) {
-                updateSyncBadge('OFFLINE', 'Saved Locally (Network Retry) | 已暫存本機');
+                if (activeSyncChannel) {
+                    updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
+                }
                 return;
             }
             const payload = {
@@ -1030,11 +1054,15 @@
             try {
                 updateSyncBadge('SYNCING', 'Syncing to Team... | 正在同步至全團隊...');
                 const res = await fetch(getCloudUrl(), {
-                    method: 'POST',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(payload)
                 });
-                if (!res.ok) throw new Error('POST failed ' + res.status);
-                updateSyncBadge('LIVE', `Live Team Sync ON (${activeSyncChannel}) | 雲端多人即時同步中`);
+                if (!res.ok) throw new Error('PUT failed ' + res.status);
+                updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
             } catch (err) {
                 console.warn('Cloud push error:', err);
                 updateSyncBadge('OFFLINE', 'Saved Locally (Network Retry) | 已暫存本機');
@@ -1061,7 +1089,6 @@
             await pullFromSharedCloud(true);
             if (syncPollTimer) clearInterval(syncPollTimer);
             syncPollTimer = setInterval(() => {
-                // 若使用者正在輸入框打字中則暫緩覆蓋，避免打斷輸入
                 const activeTag = document.activeElement?.tagName;
                 if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
                 pullFromSharedCloud(true);
@@ -1969,35 +1996,34 @@ ${activeList}`;
             audioAlertEnabled = !audioAlertEnabled;
             const textEl = document.getElementById('notify-status-text');
             if (audioAlertEnabled) {
-                if (textEl) textEl.textContent = 'Alert: ON | 警示開啟';
+                textEl.textContent = 'Alert: ON | 警示開啟';
                 triggerAlertTone();
                 showToast('Audio alert enabled | 已開啟主動警示音效');
             } else {
-                if (textEl) textEl.textContent = 'Alert: OFF | 警示靜音';
+                textEl.textContent = 'Alert: OFF | 警示靜音';
                 showToast('Audio alert muted | 已靜音警示音效');
             }
         };
 
         window.exportCSV = function () {
-            const headers = ['Category', 'Status', 'Customer / Fab', 'Description / Scope', 'Assigned / Size', 'Headcount', 'Start Date', 'End Date', 'Notes'];
+            const headers = ['Type', 'ID', 'Status/Fab', 'Customer/Assignee', 'Title/Description', 'Required Headcount', 'Start Date', 'End Date', 'Notes'];
             const projRows = projects.map(p => [
                 'Project',
+                p.id,
                 p.status,
                 `"${(p.customer || '').replace(/"/g, '""')}"`,
                 `"${(p.name || '').replace(/"/g, '""')}"`,
-                p.sizeType,
                 p.headcount,
                 p.startDate,
                 p.endDate,
                 `"${(p.notes || '').replace(/"/g, '""')}"`
             ]);
-
             const dispatchRows = dispatchLogs.map(d => [
-                'Daily Dispatch',
-                'Logged',
+                'DailyDispatch',
+                d.id,
                 `"${(d.fab || '').replace(/"/g, '""')}"`,
-                `"${(d.description || '').replace(/"/g, '""')}"`,
                 `"${(d.assignee || '').replace(/"/g, '""')}"`,
+                `"${(d.description || '').replace(/"/g, '""')}"`,
                 d.headcount,
                 d.date,
                 d.date,
@@ -2009,11 +2035,11 @@ ${activeList}`;
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `PTW_Taiwan_Project_Manpower_Arrangement_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute('download', `PTW_Taiwan_Manpower_Dispatch_${new Date().toISOString().split('T')[0]}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast('CSV exported (Projects + Daily Dispatches) | 已匯出完整報表');
+            showToast('CSV exported | 已匯出 CSV 報表');
         };
 
         window.onload = function () {
