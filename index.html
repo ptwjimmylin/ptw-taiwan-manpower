@@ -12,23 +12,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         html {
-            font-size: 14.5px;
+            font-size: 15.5px;
             transition: font-size 0.2s ease;
         }
         @media (min-width: 768px) {
             html {
-                font-size: 16.5px;
+                font-size: 17.5px;
             }
         }
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f1f5f9;
-            color: #1e293b;
+            background-color: #eef2f6;
+            color: #0f172a;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         ::-webkit-scrollbar {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
             background: #e2e8f0;
@@ -47,23 +48,23 @@
     <!-- ===================================================================== -->
     <!-- 頂部導覽列 (Top Navigation & GitHub Native Sync Status)               -->
     <!-- ===================================================================== -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
-        <div class="w-full px-3 sm:px-6 py-2.5 sm:py-3">
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-30 shadow-sm">
+        <div class="w-full px-3 sm:px-6 py-3">
             <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2.5">
-                <div class="flex items-start sm:items-center gap-2.5">
-                    <div class="p-2 bg-blue-50 border border-blue-200 rounded-xl text-blue-600 shrink-0 mt-0.5 sm:mt-0">
+                <div class="flex items-start sm:items-center gap-3">
+                    <div class="p-2.5 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl text-white shadow-sm shrink-0 mt-0.5 sm:mt-0">
                         <i data-lucide="cpu" class="w-5 h-5"></i>
                     </div>
                     <div class="min-w-0">
-                        <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-snug">
-                            PTW Taiwan Project & Manpower Arrangement <span class="text-slate-500 font-normal text-xs sm:text-sm block sm:inline">| 台灣區工程人力與專案排程控管系統</span>
+                        <h1 class="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                            PTW Taiwan Project & Manpower Arrangement <span class="text-slate-600 font-semibold text-xs sm:text-base block sm:inline">| 台灣區工程人力與專案排程控管系統</span>
                         </h1>
                         <div class="flex flex-wrap items-center gap-2 mt-1">
-                            <p class="text-[11px] text-slate-500 hidden md:block">
-                                Executive Capacity Dashboard & Daily Field Dispatch Log <span class="text-slate-400">| 營運容量儀表板與每日現場派工行程表</span>
+                            <p class="text-xs font-medium text-slate-600 hidden md:block">
+                                Executive Capacity Dashboard & Daily Field Dispatch Log <span class="text-slate-500">| 營運容量儀表板與每日現場派工行程表</span>
                             </p>
-                            <button onclick="openGitHubSyncModal()" id="cloud-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:brightness-95 transition cursor-pointer" title="點擊設定 GitHub 寫入權限（瀏覽免設定）">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <button onclick="openGitHubSyncModal()" id="cloud-sync-badge" class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:brightness-95 transition cursor-pointer" title="點擊設定 GitHub 寫入權限（瀏覽免設定）">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                 <span id="cloud-sync-text">GitHub Live Sync | 讀取最新排程中...</span>
                             </button>
                         </div>
@@ -71,43 +72,43 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-0.5" title="調整畫面與字體大小">
-                        <button onclick="setFontSizeScale('sm')" id="font-btn-sm" class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">A-</button>
-                        <button onclick="setFontSizeScale('md')" id="font-btn-md" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer">A</button>
-                        <button onclick="setFontSizeScale('lg')" id="font-btn-lg" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition cursor-pointer">A+</button>
+                    <div class="flex items-center bg-slate-100 border border-slate-300 rounded-xl p-0.5" title="調整畫面與字體大小">
+                        <button onclick="setFontSizeScale('sm')" id="font-btn-sm" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition cursor-pointer">A-</button>
+                        <button onclick="setFontSizeScale('md')" id="font-btn-md" class="px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-sm transition cursor-pointer">A</button>
+                        <button onclick="setFontSizeScale('lg')" id="font-btn-lg" class="px-2.5 py-1 rounded-lg text-xs font-extrabold text-slate-700 hover:text-slate-950 transition cursor-pointer">A+</button>
                     </div>
 
-                    <button onclick="manualRefreshFromGitHub()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="立即從 GitHub 抓取最新資料">
+                    <button onclick="manualRefreshFromGitHub()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition cursor-pointer" title="立即從 GitHub 抓取最新資料">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
-                        <span>Refresh <span class="hidden sm:inline text-slate-500">| 立即更新</span></span>
+                        <span>Refresh <span class="hidden sm:inline text-slate-600">| 立即更新</span></span>
                     </button>
 
-                    <button onclick="openGitHubSyncModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 transition cursor-pointer" title="設定 GitHub 寫入同步權限">
+                    <button onclick="openGitHubSyncModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 transition cursor-pointer" title="設定 GitHub 寫入同步權限">
                         <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
-                        <span>Sync Setup <span class="hidden sm:inline text-slate-500">| 同步權限</span></span>
+                        <span>Sync Setup <span class="hidden sm:inline text-emerald-700">| 同步權限</span></span>
                     </button>
 
-                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="開啟主動警示音效">
-                        <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-500"></i>
+                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition cursor-pointer" title="開啟主動警示音效">
+                        <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-600"></i>
                         <span id="notify-status-text" class="hidden sm:inline">Alert: ON | 警示開啟</span>
                     </button>
 
-                    <button onclick="openProjectModal()" class="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition cursor-pointer">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                        <span>Add Project <span class="hidden sm:inline font-normal opacity-90">| 新增專案</span></span>
+                    <button onclick="openProjectModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition cursor-pointer">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Add Project <span class="hidden sm:inline font-semibold opacity-95">| 新增專案</span></span>
                     </button>
 
-                    <button onclick="openSupportModal()" class="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition cursor-pointer">
-                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                        <span>Draft <span class="hidden sm:inline font-normal opacity-90">| 增員草稿</span></span>
+                    <button onclick="openSupportModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition cursor-pointer">
+                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                        <span>Draft <span class="hidden sm:inline font-semibold opacity-95">| 增員草稿</span></span>
                     </button>
 
-                    <button onclick="exportCSV()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="匯出 CSV 報表">
+                    <button onclick="exportCSV()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition cursor-pointer" title="匯出 CSV 報表">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                        <span class="hidden md:inline">Export <span class="text-slate-500">| 匯出</span></span>
+                        <span class="hidden md:inline">Export <span class="text-slate-600">| 匯出</span></span>
                     </button>
 
-                    <button onclick="openResetConfirmModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 border border-slate-200 transition cursor-pointer" title="重設為預設範例資料">
+                    <button onclick="openResetConfirmModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border border-slate-300 transition cursor-pointer" title="重設為預設範例資料">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
@@ -118,208 +119,208 @@
     <!-- ===================================================================== -->
     <!-- 主內容區 (100% Full-Width Executive Dashboard & Monthly Dispatch)      -->
     <!-- ===================================================================== -->
-    <main class="flex-1 w-full px-3 sm:px-6 py-4 space-y-4">
+    <main class="flex-1 w-full px-3 sm:px-6 py-4 sm:py-5 space-y-5">
 
         <!-- 1. 精簡容量儀表板 (Compact Capacity Control Dashboard) -->
-        <section class="bg-white border border-slate-200 rounded-2xl p-3.5 sm:p-4 shadow-2xs space-y-3.5">
-            <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
-                <div class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <section class="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200">
+                <div class="flex items-center gap-2 text-xs sm:text-sm font-extrabold text-slate-900 tracking-wide">
                     <i data-lucide="sliders-horizontal" class="w-4 h-4 text-blue-600"></i>
-                    <span>Capacity Control Dashboard <span class="text-slate-400 font-normal">| 台灣區人力編制與營運保底儀表板</span></span>
+                    <span>Capacity Control Dashboard <span class="text-slate-600 font-semibold">| 台灣區人力編制與營運保底儀表板</span></span>
                 </div>
-                <div class="flex flex-wrap items-center gap-3 text-xs">
-                    <label for="toggle-include-pending" class="flex items-center gap-1.5 text-slate-600 cursor-pointer select-none">
-                        <input type="checkbox" id="toggle-include-pending" onchange="recalculateAll(false)" class="w-3.5 h-3.5 rounded accent-blue-600 cursor-pointer">
-                        <span>Include Pending / Planning <span class="text-slate-400">(預設僅計已確認專案)</span></span>
+                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+                    <label for="toggle-include-pending" class="flex items-center gap-1.5 text-slate-700 cursor-pointer select-none">
+                        <input type="checkbox" id="toggle-include-pending" onchange="recalculateAll(false)" class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
+                        <span>Include Pending / Planning <span class="text-slate-500 font-normal">(預設僅計已確認專案)</span></span>
                     </label>
-                    <button onclick="toggleRulesEditor()" class="text-blue-600 hover:text-blue-700 font-medium cursor-pointer">Sizing Rules | 人數規則</button>
+                    <button onclick="toggleRulesEditor()" class="text-blue-700 hover:text-blue-800 font-bold underline decoration-blue-300 underline-offset-2 cursor-pointer">Sizing Rules | 人數規則</button>
                 </div>
             </div>
 
             <!-- 4 項核心人力設定欄位 (含國外支援人名欄) -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3">
-                <div class="xl:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-                    <label class="block text-[11px] font-semibold text-slate-600">Total Staff | 人數編制</label>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <input type="number" id="input-total-staff" min="1" max="100" value="8" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500">
-                        <span class="text-xs text-slate-500 shrink-0">人</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-3.5">
+                <div class="xl:col-span-2 bg-gradient-to-b from-slate-50 to-slate-100/70 border border-slate-300/80 rounded-xl p-3">
+                    <label class="block text-xs font-bold text-slate-800">Total Staff | 人數編制</label>
+                    <div class="flex items-center gap-1.5 mt-1.5">
+                        <input type="number" id="input-total-staff" min="1" max="100" value="8" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-base font-extrabold text-slate-950 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+                        <span class="text-xs font-bold text-slate-700 shrink-0">人</span>
                     </div>
                 </div>
 
-                <div class="xl:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-                    <label class="block text-[11px] font-semibold text-slate-600">Base Ops | 營運保底</label>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <input type="number" id="input-base-ops" min="0" max="50" value="5" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-amber-600 focus:outline-none focus:border-blue-500">
-                        <span class="text-xs text-slate-500 shrink-0">人</span>
+                <div class="xl:col-span-2 bg-gradient-to-b from-amber-50/60 to-slate-50 border border-amber-300/80 rounded-xl p-3">
+                    <label class="block text-xs font-bold text-slate-800">Base Ops | 營運保底</label>
+                    <div class="flex items-center gap-1.5 mt-1.5">
+                        <input type="number" id="input-base-ops" min="0" max="50" value="5" onchange="updateSettings(true)" class="w-full bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-base font-extrabold text-amber-700 focus:outline-none focus:border-amber-600 focus:ring-2 focus:ring-amber-100">
+                        <span class="text-xs font-bold text-slate-700 shrink-0">人</span>
                     </div>
                 </div>
 
-                <div class="xl:col-span-3 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
-                    <label class="block text-[11px] font-semibold text-slate-600">Added TW Local | 新增台灣本土人數</label>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <input type="number" id="input-added-tw" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-blue-600 focus:outline-none focus:border-blue-500">
-                        <span class="text-xs text-slate-500 shrink-0">人</span>
+                <div class="xl:col-span-3 bg-gradient-to-b from-blue-50/60 to-slate-50 border border-blue-300/80 rounded-xl p-3">
+                    <label class="block text-xs font-bold text-slate-800">Added TW Local | 新增台灣本土人數</label>
+                    <div class="flex items-center gap-1.5 mt-1.5">
+                        <input type="number" id="input-added-tw" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-blue-300 rounded-lg px-3 py-1.5 text-base font-extrabold text-blue-700 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+                        <span class="text-xs font-bold text-slate-700 shrink-0">人</span>
                     </div>
                 </div>
 
-                <div class="xl:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-2.5">
+                <div class="xl:col-span-5 bg-gradient-to-b from-emerald-50/60 to-slate-50 border border-emerald-300/80 rounded-xl p-3">
                     <div class="flex items-center justify-between gap-2">
-                        <label class="block text-[11px] font-semibold text-slate-600">Added Overseas | 新增國外支援</label>
-                        <span class="text-[10px] font-medium text-emerald-700">人數 + 支援人員姓名</span>
+                        <label class="block text-xs font-bold text-slate-800">Added Overseas | 新增國外支援</label>
+                        <span class="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">人數 + 支援人員姓名</span>
                     </div>
-                    <div class="flex items-center gap-2 mt-1">
+                    <div class="flex items-center gap-2 mt-1.5">
                         <div class="flex items-center gap-1 w-24 shrink-0">
-                            <input type="number" id="input-added-overseas" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-sm font-bold text-emerald-600 focus:outline-none focus:border-blue-500">
-                            <span class="text-xs text-slate-500">人</span>
+                            <input type="number" id="input-added-overseas" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-emerald-300 rounded-lg px-2.5 py-1.5 text-base font-extrabold text-emerald-700 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
+                            <span class="text-xs font-bold text-slate-700">人</span>
                         </div>
-                        <input type="text" id="input-overseas-names" placeholder="填寫國外支援人名 (e.g. John, Mike)" onchange="updateSettings(true)" class="flex-1 min-w-0 bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="input-overseas-names" placeholder="填寫國外支援人名 (e.g. John, Mike)" onchange="updateSettings(true)" class="flex-1 min-w-0 bg-white border border-emerald-300 rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
                     </div>
                 </div>
             </div>
 
             <!-- 可折疊規模換算規則列 -->
-            <div id="rules-editor" class="hidden grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-100">
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                    <span class="text-slate-600">Onsite 駐廠</span>
-                    <input type="number" id="rule-onsite" min="1" value="1" onchange="updateRules()" class="w-12 bg-white border border-slate-300 rounded px-1.5 py-0.5 text-right text-slate-900 font-bold">
+            <div id="rules-editor" class="hidden grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-slate-200">
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <span class="text-slate-700">Onsite 駐廠</span>
+                    <input type="number" id="rule-onsite" min="1" value="1" onchange="updateRules()" class="w-14 bg-white border border-slate-300 rounded px-2 py-0.5 text-right text-slate-950 font-extrabold">
                 </div>
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                    <span class="text-slate-600">1-Tool 單台</span>
-                    <input type="number" id="rule-single" min="1" value="2" onchange="updateRules()" class="w-12 bg-white border border-slate-300 rounded px-1.5 py-0.5 text-right text-slate-900 font-bold">
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <span class="text-slate-700">1-Tool 單台</span>
+                    <input type="number" id="rule-single" min="1" value="2" onchange="updateRules()" class="w-14 bg-white border border-slate-300 rounded px-2 py-0.5 text-right text-slate-950 font-extrabold">
                 </div>
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                    <span class="text-slate-600">2-Tool 雙台</span>
-                    <input type="number" id="rule-double" min="1" value="3" onchange="updateRules()" class="w-12 bg-white border border-slate-300 rounded px-1.5 py-0.5 text-right text-slate-900 font-bold">
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <span class="text-slate-700">2-Tool 雙台</span>
+                    <input type="number" id="rule-double" min="1" value="3" onchange="updateRules()" class="w-14 bg-white border border-slate-300 rounded px-2 py-0.5 text-right text-slate-950 font-extrabold">
                 </div>
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                    <span class="text-slate-600">Large 大型</span>
-                    <input type="number" id="rule-large" min="1" value="6" onchange="updateRules()" class="w-12 bg-white border border-slate-300 rounded px-1.5 py-0.5 text-right text-slate-900 font-bold">
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold">
+                    <span class="text-slate-700">Large 大型</span>
+                    <input type="number" id="rule-large" min="1" value="6" onchange="updateRules()" class="w-14 bg-white border border-slate-300 rounded px-2 py-0.5 text-right text-slate-950 font-extrabold">
                 </div>
             </div>
 
             <!-- 每日負載長條圖 + 單日檢視器 -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 pt-1">
-                <div class="lg:col-span-8 bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                        <span class="text-xs font-semibold text-slate-700">Daily Load Trend (2026-11 ~ 2027-03) <span class="text-slate-400 font-normal">| 點擊長條檢視單日人力</span></span>
-                        <div class="flex items-center gap-2.5 text-[10px] text-slate-600">
-                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-xs bg-emerald-500"></span>Safe 充足</span>
-                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-xs bg-amber-500"></span>Full 滿載</span>
-                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-xs bg-rose-500"></span>Deficit 缺人</span>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 pt-1">
+                <div class="lg:col-span-8 bg-slate-50/90 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                        <span class="text-xs sm:text-sm font-bold text-slate-800">Daily Load Trend (2026-11 ~ 2027-03) <span class="text-slate-500 font-medium text-xs">| 點擊長條檢視單日人力</span></span>
+                        <div class="flex items-center gap-3 text-xs font-semibold text-slate-700">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-xs bg-emerald-500"></span>Safe 充足</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-xs bg-amber-500"></span>Full 滿載</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-xs bg-rose-500"></span>Deficit 缺人</span>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <div id="timeline-chart-container" class="flex items-end gap-0.5 h-24 min-w-[680px] pt-2 border-b border-slate-200 select-none"></div>
-                        <div class="flex justify-between min-w-[680px] pt-1 text-[10px] text-slate-400">
+                        <div id="timeline-chart-container" class="flex items-end gap-0.5 h-24 min-w-[680px] pt-2 border-b border-slate-300 select-none"></div>
+                        <div class="flex justify-between min-w-[680px] pt-1.5 text-xs font-semibold text-slate-600">
                             <span>2026-11</span><span>2026-12</span><span>2027-01</span><span>2027-02</span><span>2027-03</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
+                <div class="lg:col-span-4 bg-slate-50/90 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between">
                     <div class="flex items-center justify-between">
-                        <span id="inspector-date" class="text-xs font-bold text-slate-900">2026-12-14 (Mon)</span>
-                        <span id="inspector-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">缺口 3 人</span>
+                        <span id="inspector-date" class="text-sm font-extrabold text-slate-950">2026-12-14 (Mon)</span>
+                        <span id="inspector-status-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">缺口 3 人</span>
                     </div>
-                    <div class="grid grid-cols-3 gap-1.5 my-2 bg-white rounded-lg p-1.5 text-center border border-slate-200 text-[11px]">
-                        <div><span class="text-slate-400 block text-[10px]">供給</span><strong id="inspector-supply" class="text-slate-900">8 人</strong></div>
-                        <div class="border-x border-slate-200"><span class="text-slate-400 block text-[10px]">需求</span><strong id="inspector-demand" class="text-amber-600">11 人</strong></div>
-                        <div><span class="text-slate-400 block text-[10px]">結餘</span><strong id="inspector-balance" class="text-rose-600">-3 人</strong></div>
+                    <div class="grid grid-cols-3 gap-1.5 my-2.5 bg-white rounded-xl p-2 text-center border border-slate-200 shadow-2xs text-xs">
+                        <div><span class="text-slate-600 font-semibold block text-[11px]">供給</span><strong id="inspector-supply" class="text-sm font-extrabold text-slate-950">8 人</strong></div>
+                        <div class="border-x border-slate-200"><span class="text-slate-600 font-semibold block text-[11px]">需求</span><strong id="inspector-demand" class="text-sm font-extrabold text-amber-700">11 人</strong></div>
+                        <div><span class="text-slate-600 font-semibold block text-[11px]">結餘</span><strong id="inspector-balance" class="text-sm font-extrabold text-rose-700">-3 人</strong></div>
                     </div>
-                    <div id="inspector-project-list" class="space-y-1 max-h-16 overflow-y-auto pr-1 text-[11px]"></div>
+                    <div id="inspector-project-list" class="space-y-1.5 max-h-20 overflow-y-auto pr-1 text-xs font-medium"></div>
                 </div>
             </div>
         </section>
 
         <!-- 2. 每月每日現場派工與叫修行程表 (Monthly Daily Field Dispatch & Issue Schedule) -->
-        <section class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
-            <div class="p-3.5 sm:p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 shrink-0">
+        <section class="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
+            <div class="p-4 sm:p-5 border-b border-slate-200 bg-gradient-to-r from-white via-emerald-50/25 to-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-emerald-600 rounded-xl text-white shadow-sm shrink-0">
                         <i data-lucide="calendar-days" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm sm:text-base font-bold text-slate-900">
-                            Monthly Daily Field Dispatch & Issue Schedule <span class="text-slate-500 font-normal text-xs block sm:inline">| 每月每日現場派工與叫修行程表</span>
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-950">
+                            Monthly Daily Field Dispatch & Issue Schedule <span class="text-slate-600 font-semibold text-xs sm:text-sm block sm:inline">| 每月每日現場派工與叫修行程表</span>
                         </h3>
-                        <p class="text-[11px] text-slate-500">
+                        <p class="text-xs font-medium text-slate-600 mt-0.5">
                             Grouped cleanly by date — multiple dispatches on the same day stack neatly inside one daily card <span class="hidden sm:inline">| 同日多筆派工自動整齊收納於同一日期列</span>
                         </p>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <label for="toggle-only-dispatched" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700 cursor-pointer select-none">
-                        <input type="checkbox" id="toggle-only-dispatched" onchange="renderMonthlyDispatchTable()" class="w-3.5 h-3.5 rounded accent-emerald-600 cursor-pointer">
-                        <span>Active Days Only <span class="text-slate-500">| 僅看有派工日</span></span>
+                    <label for="toggle-only-dispatched" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-800 cursor-pointer select-none">
+                        <input type="checkbox" id="toggle-only-dispatched" onchange="renderMonthlyDispatchTable()" class="w-4 h-4 rounded accent-emerald-600 cursor-pointer">
+                        <span>Active Days Only <span class="text-slate-600 font-normal">| 僅看有派工日</span></span>
                     </label>
 
-                    <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl px-1 py-0.5">
-                        <button onclick="changeDispatchMonth(-1)" class="p-1.5 text-slate-600 hover:text-slate-900 transition cursor-pointer" title="Previous Month | 上個月">
+                    <div class="flex items-center bg-slate-100 border border-slate-300 rounded-xl px-1 py-0.5">
+                        <button onclick="changeDispatchMonth(-1)" class="p-1.5 text-slate-700 hover:text-slate-950 transition cursor-pointer" title="Previous Month | 上個月">
                             <i data-lucide="chevron-left" class="w-4 h-4"></i>
                         </button>
-                        <input type="month" id="dispatch-month-picker" value="2026-11" onchange="onDispatchMonthChange()" class="bg-transparent text-xs font-bold text-slate-900 px-1.5 py-1 focus:outline-none cursor-pointer">
-                        <button onclick="changeDispatchMonth(1)" class="p-1.5 text-slate-600 hover:text-slate-900 transition cursor-pointer" title="Next Month | 下個月">
+                        <input type="month" id="dispatch-month-picker" value="2026-11" onchange="onDispatchMonthChange()" class="bg-transparent text-xs sm:text-sm font-extrabold text-slate-950 px-1.5 py-1 focus:outline-none cursor-pointer">
+                        <button onclick="changeDispatchMonth(1)" class="p-1.5 text-slate-700 hover:text-slate-950 transition cursor-pointer" title="Next Month | 下個月">
                             <i data-lucide="chevron-right" class="w-4 h-4"></i>
                         </button>
                     </div>
 
-                    <button onclick="openDailyDispatchModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer">
-                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    <button onclick="openDailyDispatchModal()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>Add Dispatch <span class="hidden sm:inline">| 登記派工</span></span>
                     </button>
                 </div>
             </div>
 
-            <div class="hidden md:block overflow-x-auto max-h-[600px] overflow-y-auto">
+            <div class="hidden md:block overflow-x-auto max-h-[640px] overflow-y-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200 shadow-2xs">
-                        <tr class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                            <th class="py-2.5 px-4 w-36">Date / Day <span class="block font-normal text-slate-400">日期 / 星期</span></th>
-                            <th class="py-2.5 px-4">Daily Field Dispatches (Issue Fab · Description · Assigned Engineer) <span class="block font-normal text-slate-400">當日派工任務明細（廠區 · 異常描述 · 指派工程師）</span></th>
-                            <th class="py-2.5 px-4 w-28 text-right">Action <span class="block font-normal text-slate-400">新增派工</span></th>
+                    <thead class="sticky top-0 z-10 bg-slate-100 border-b border-slate-300 shadow-2xs">
+                        <tr class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                            <th class="py-3 px-4 w-40">Date / Day <span class="block font-semibold text-slate-600 normal-case">日期 / 星期</span></th>
+                            <th class="py-3 px-4">Daily Field Dispatches (Issue Fab · Description · Assigned Engineer) <span class="block font-semibold text-slate-600 normal-case">當日派工任務明細（廠區 · 異常描述 · 指派工程師）</span></th>
+                            <th class="py-3 px-4 w-32 text-right">Action <span class="block font-semibold text-slate-600 normal-case">新增派工</span></th>
                         </tr>
                     </thead>
-                    <tbody id="monthly-dispatch-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm"></tbody>
+                    <tbody id="monthly-dispatch-tbody" class="divide-y divide-slate-200 text-sm"></tbody>
                 </table>
             </div>
 
-            <div id="monthly-dispatch-mobile-list" class="md:hidden divide-y divide-slate-200 max-h-[540px] overflow-y-auto"></div>
+            <div id="monthly-dispatch-mobile-list" class="md:hidden divide-y divide-slate-200 max-h-[560px] overflow-y-auto"></div>
         </section>
 
         <!-- 3. 專案排程與人力配置總表 (Collaborative Project Schedule Table) -->
-        <section class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
-            <div class="p-3.5 sm:p-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+        <section class="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
+            <div class="p-4 sm:p-5 border-b border-slate-200 bg-gradient-to-r from-white via-blue-50/25 to-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
                 <div>
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900">
-                        Project Schedule & Manpower Allocation <span class="text-slate-500 font-normal text-xs block sm:inline">| 專案排程與人力需求清單</span>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-950">
+                        Project Schedule & Manpower Allocation <span class="text-slate-600 font-semibold text-xs sm:text-sm block sm:inline">| 專案排程與人力需求清單</span>
                     </h3>
-                    <p class="text-[11px] text-slate-500 mt-0.5">
+                    <p class="text-xs font-medium text-slate-600 mt-0.5">
                         Only "Confirmed" projects count toward manpower demand unless simulation is checked <span class="hidden sm:inline">| 預設僅計入「已確認」專案</span>
                     </p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button onclick="setFilterStatus('ALL')" id="filter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white transition cursor-pointer">All | 全部</button>
-                    <button onclick="setFilterStatus('Confirmed')" id="filter-Confirmed" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">Confirmed | 已確認</button>
-                    <button onclick="setFilterStatus('Pending')" id="filter-Pending" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">Pending | 待確認</button>
-                    <button onclick="setFilterStatus('Planning')" id="filter-Planning" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">2027 Plan | 規劃中</button>
+                    <button onclick="setFilterStatus('ALL')" id="filter-ALL" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-2xs transition cursor-pointer">All | 全部</button>
+                    <button onclick="setFilterStatus('Confirmed')" id="filter-Confirmed" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer">Confirmed | 已確認</button>
+                    <button onclick="setFilterStatus('Pending')" id="filter-Pending" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer">Pending | 待確認</button>
+                    <button onclick="setFilterStatus('Planning')" id="filter-Planning" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer">2027 Plan | 規劃中</button>
                 </div>
             </div>
 
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                            <th class="py-3 px-4">Status <span class="block font-normal text-slate-400">專案狀態</span></th>
-                            <th class="py-3 px-4">Customer / Fab <span class="block font-normal text-slate-400">客戶與廠區</span></th>
-                            <th class="py-3 px-4">Project Scope & Notes <span class="block font-normal text-slate-400">專案內容與備註</span></th>
-                            <th class="py-3 px-4">Schedule <span class="block font-normal text-slate-400">起訖日期區間</span></th>
-                            <th class="py-3 px-4 text-center">Required Staff <span class="block font-normal text-slate-400">需求人力</span></th>
-                            <th class="py-3 px-4 text-right">Actions <span class="block font-normal text-slate-400">協作操作</span></th>
+                        <tr class="bg-slate-100 border-b border-slate-300 text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                            <th class="py-3 px-4">Status <span class="block font-semibold text-slate-600 normal-case">專案狀態</span></th>
+                            <th class="py-3 px-4">Customer / Fab <span class="block font-semibold text-slate-600 normal-case">客戶與廠區</span></th>
+                            <th class="py-3 px-4">Project Scope & Notes <span class="block font-semibold text-slate-600 normal-case">專案內容與備註</span></th>
+                            <th class="py-3 px-4">Schedule <span class="block font-semibold text-slate-600 normal-case">起訖日期區間</span></th>
+                            <th class="py-3 px-4 text-center">Required Staff <span class="block font-semibold text-slate-600 normal-case">需求人力</span></th>
+                            <th class="py-3 px-4 text-right">Actions <span class="block font-semibold text-slate-600 normal-case">協作操作</span></th>
                         </tr>
                     </thead>
-                    <tbody id="project-table-body" class="divide-y divide-slate-200 text-xs sm:text-sm"></tbody>
+                    <tbody id="project-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
                 </table>
             </div>
 
@@ -814,17 +815,17 @@
         window.setFontSizeScale = function (scale) {
             const isMobile = window.innerWidth < 768;
             const sizes = isMobile
-                ? { sm: '13.5px', md: '14.5px', lg: '16.5px' }
-                : { sm: '15px', md: '16.5px', lg: '18.5px' };
-            const labels = { sm: 'Compact | 標準', md: 'Default | 舒適', lg: 'Large | 大字體' };
+                ? { sm: '14.5px', md: '15.5px', lg: '17.5px' }
+                : { sm: '16px', md: '17.5px', lg: '19.5px' };
+            const labels = { sm: 'Compact | 標準', md: 'Default | 清晰大字', lg: 'Large | 特大字體' };
             document.documentElement.style.fontSize = sizes[scale] || sizes.md;
 
             ['sm', 'md', 'lg'].forEach(key => {
                 const btn = document.getElementById(`font-btn-${key}`);
                 if (!btn) return;
                 btn.className = key === scale
-                    ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer'
-                    : 'px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                    ? 'px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-sm transition cursor-pointer'
+                    : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition cursor-pointer';
             });
 
             try {
@@ -841,15 +842,15 @@
                 const savedScale = localStorage.getItem(LOCAL_STORAGE_FONT_KEY) || 'md';
                 const isMobile = window.innerWidth < 768;
                 const sizes = isMobile
-                    ? { sm: '13.5px', md: '14.5px', lg: '16.5px' }
-                    : { sm: '15px', md: '16.5px', lg: '18.5px' };
+                    ? { sm: '14.5px', md: '15.5px', lg: '17.5px' }
+                    : { sm: '16px', md: '17.5px', lg: '19.5px' };
                 document.documentElement.style.fontSize = sizes[savedScale] || sizes.md;
                 ['sm', 'md', 'lg'].forEach(key => {
                     const btn = document.getElementById(`font-btn-${key}`);
                     if (!btn) return;
                     btn.className = key === savedScale
-                        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer'
-                        : 'px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                        ? 'px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-sm transition cursor-pointer'
+                        : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition cursor-pointer';
                 });
             } catch (e) {}
         }
@@ -1480,15 +1481,15 @@
                 if (dayLogs.length === 0) {
                     rowsHtml.push(`
                         <tr class="${rowBg} transition">
-                            <td class="py-2.5 px-4 font-mono text-xs whitespace-nowrap align-middle">
-                                <span class="${isWeekend ? 'text-slate-400' : 'text-slate-900 font-bold'}">${dateStr}</span>
-                                <span class="block text-[11px] ${isWeekend ? 'text-slate-400' : 'text-slate-500'}">${weekdayNames[dow]}</span>
+                            <td class="py-3 px-4 font-mono text-sm whitespace-nowrap align-middle">
+                                <span class="${isWeekend ? 'text-slate-500 font-semibold' : 'text-slate-950 font-extrabold'}">${dateStr}</span>
+                                <span class="block text-xs font-semibold ${isWeekend ? 'text-slate-400' : 'text-slate-600'}">${weekdayNames[dow]}</span>
                             </td>
-                            <td class="py-2.5 px-4 text-xs text-slate-400 italic align-middle">
+                            <td class="py-3 px-4 text-xs sm:text-sm font-medium text-slate-500 align-middle">
                                 No issue / dispatch logged | 無特別派工紀錄
                             </td>
-                            <td class="py-2.5 px-4 text-right whitespace-nowrap align-middle">
-                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-emerald-600 text-slate-700 hover:text-white border border-slate-200 transition cursor-pointer">
+                            <td class="py-3 px-4 text-right whitespace-nowrap align-middle">
+                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-emerald-600 text-slate-800 hover:text-white border border-slate-300 transition cursor-pointer">
                                     + Add | 填寫
                                 </button>
                             </td>
@@ -1496,40 +1497,40 @@
                     `);
 
                     mobileCardsHtml.push(`
-                        <div class="p-3 flex items-center justify-between gap-2 ${isWeekend ? 'bg-slate-50 opacity-75' : 'bg-white'}">
+                        <div class="p-3.5 flex items-center justify-between gap-2 ${isWeekend ? 'bg-slate-50/90' : 'bg-white'}">
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-mono text-xs font-bold ${isWeekend ? 'text-slate-500' : 'text-slate-900'}">${dateStr} (${shortWeekdays[dow]})</span>
-                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">Weekend 週末</span>' : ''}
+                                    <span class="font-mono text-sm font-extrabold ${isWeekend ? 'text-slate-600' : 'text-slate-950'}">${dateStr} (${shortWeekdays[dow]})</span>
+                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200 text-slate-600">Weekend 週末</span>' : ''}
                                 </div>
-                                <p class="text-[11px] text-slate-400 mt-0.5 truncate">No issue / dispatch logged | 無派工紀錄</p>
+                                <p class="text-xs font-medium text-slate-500 mt-0.5 truncate">No issue / dispatch logged | 無派工紀錄</p>
                             </div>
-                            <button onclick="openDailyDispatchModal('${dateStr}')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 active:bg-emerald-600 text-slate-700 border border-slate-200">
+                            <button onclick="openDailyDispatchModal('${dateStr}')" class="shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 active:bg-emerald-600 text-slate-800 border border-slate-300">
                                 + 填寫
                             </button>
                         </div>
                     `);
                 } else {
                     const groupedItemsHtml = dayLogs.map(log => `
-                        <div class="flex items-center justify-between gap-3 bg-white border border-slate-200/90 hover:border-emerald-300 rounded-xl px-3 py-2 shadow-2xs transition">
+                        <div class="flex items-center justify-between gap-3 bg-white border-l-4 border-l-emerald-500 border border-slate-300/90 hover:border-emerald-400 rounded-xl px-3.5 py-2.5 shadow-2xs transition">
                             <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 min-w-0 flex-1">
-                                <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
                                     ${log.fab}
                                 </span>
-                                <span class="text-slate-800 font-medium text-xs sm:text-sm truncate" title="${log.description}">
+                                <span class="text-slate-950 font-semibold text-sm truncate" title="${log.description}">
                                     ${log.description}
                                 </span>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
-                                <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg">
-                                    <span class="font-semibold text-emerald-700 text-xs">${log.assignee}</span>
-                                    <span class="px-1.5 py-0.2 rounded bg-blue-100 text-blue-700 text-[11px] font-bold">${log.headcount} 人</span>
+                                <div class="flex items-center gap-2 bg-slate-100 border border-slate-300 px-3 py-1 rounded-lg">
+                                    <span class="font-extrabold text-emerald-800 text-xs sm:text-sm">${log.assignee}</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-blue-600 text-white text-xs font-extrabold">${log.headcount} 人</span>
                                 </div>
-                                <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700 transition cursor-pointer" title="Edit | 編輯此筆">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 border border-slate-200 transition cursor-pointer" title="Edit | 編輯此筆">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="deleteDailyDispatch('${log.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-600 transition cursor-pointer" title="Delete | 刪除此筆">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <button onclick="deleteDailyDispatch('${log.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-700 border border-slate-200 transition cursor-pointer" title="Delete | 刪除此筆">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
@@ -1537,20 +1538,20 @@
 
                     rowsHtml.push(`
                         <tr class="${rowBg} transition">
-                            <td class="py-3 px-4 font-mono text-xs whitespace-nowrap align-top">
-                                <span class="text-slate-900 font-bold text-sm">${dateStr}</span>
-                                <span class="block text-[11px] text-slate-500 mt-0.5">${weekdayNames[dow]}</span>
-                                <span class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                            <td class="py-3.5 px-4 font-mono text-sm whitespace-nowrap align-top">
+                                <span class="text-slate-950 font-extrabold text-base">${dateStr}</span>
+                                <span class="block text-xs font-bold text-slate-600 mt-0.5">${weekdayNames[dow]}</span>
+                                <span class="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
                                     ${dayLogs.length} 筆派工
                                 </span>
                             </td>
-                            <td class="py-2.5 px-4 align-top">
-                                <div class="space-y-1.5">
+                            <td class="py-3 px-4 align-top">
+                                <div class="space-y-2">
                                     ${groupedItemsHtml}
                                 </div>
                             </td>
-                            <td class="py-3 px-4 text-right whitespace-nowrap align-top">
-                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition cursor-pointer">
+                            <td class="py-3.5 px-4 text-right whitespace-nowrap align-top">
+                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer">
                                     + 同日新增
                                 </button>
                             </td>
@@ -1558,31 +1559,31 @@
                     `);
 
                     const mobileSubItems = dayLogs.map(log => `
-                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5">
+                        <div class="bg-slate-50 border-l-4 border-l-emerald-500 border border-slate-300 rounded-xl p-3 space-y-2">
                             <div class="flex items-center justify-between gap-2">
-                                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">${log.fab}</span>
+                                <span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300">${log.fab}</span>
                                 <div class="flex items-center gap-1.5">
-                                    <span class="text-emerald-700 font-semibold text-xs">👤 ${log.assignee} (${log.headcount}人)</span>
-                                    <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1 rounded bg-white text-slate-600 border border-slate-200">
-                                        <i data-lucide="pencil" class="w-3 h-3"></i>
+                                    <span class="text-emerald-800 font-extrabold text-xs">👤 ${log.assignee} (${log.headcount}人)</span>
+                                    <button onclick="openDailyDispatchModal('${dateStr}', '${log.id}')" class="p-1.5 rounded-lg bg-white text-slate-700 border border-slate-300">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                     </button>
-                                    <button onclick="deleteDailyDispatch('${log.id}')" class="p-1 rounded bg-white text-rose-600 border border-slate-200">
-                                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                    <button onclick="deleteDailyDispatch('${log.id}')" class="p-1.5 rounded-lg bg-white text-rose-700 border border-slate-300">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
                             </div>
-                            <p class="text-xs text-slate-800 leading-snug">${log.description}</p>
+                            <p class="text-sm font-semibold text-slate-900 leading-snug">${log.description}</p>
                         </div>
                     `).join('');
 
                     mobileCardsHtml.push(`
-                        <div class="p-3.5 bg-white space-y-2.5">
+                        <div class="p-4 bg-white space-y-2.5">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-mono text-xs font-bold text-slate-900">${dateStr} (${shortWeekdays[dow]})</span>
-                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-500">Weekend 週末</span>' : ''}
+                                    <span class="font-mono text-sm font-extrabold text-slate-950">${dateStr} (${shortWeekdays[dow]})</span>
+                                    ${isWeekend ? '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600">Weekend 週末</span>' : ''}
                                 </div>
-                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-600 text-white">
+                                <button onclick="openDailyDispatchModal('${dateStr}')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-2xs">
                                     + 新增派工
                                 </button>
                             </div>
@@ -1707,41 +1708,41 @@
             tbody.innerHTML = filtered.map(p => {
                 let badgeHtml = '';
                 if (p.status === 'Confirmed') {
-                    badgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Confirmed | 已確認</span>`;
+                    badgeHtml = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">Confirmed | 已確認</span>`;
                 } else if (p.status === 'Pending') {
-                    badgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">Pending | 待確認</span>`;
+                    badgeHtml = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Pending | 待確認</span>`;
                 } else {
-                    badgeHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">2027 Plan | 規劃中</span>`;
+                    badgeHtml = `<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">2027 Plan | 規劃中</span>`;
                 }
 
                 const confirmBtn = p.status !== 'Confirmed'
-                    ? `<button onclick="promoteToConfirmed('${p.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 transition cursor-pointer" title="Confirm Project | 確認成案">Confirm | 成案</button>`
+                    ? `<button onclick="promoteToConfirmed('${p.id}')" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white border border-emerald-300 transition cursor-pointer" title="Confirm Project | 確認成案">Confirm | 成案</button>`
                     : '';
 
                 return `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="py-3.5 px-4 whitespace-nowrap">${badgeHtml}</td>
-                        <td class="py-3.5 px-4 font-bold text-slate-900 whitespace-nowrap">${p.customer}</td>
+                        <td class="py-3.5 px-4 font-extrabold text-slate-950 whitespace-nowrap">${p.customer}</td>
                         <td class="py-3.5 px-4">
-                            <div class="font-medium text-slate-800">${p.name}</div>
-                            ${p.notes ? `<div class="text-[11px] text-slate-500 mt-0.5">${p.notes}</div>` : ''}
+                            <div class="font-bold text-slate-900">${p.name}</div>
+                            ${p.notes ? `<div class="text-xs font-medium text-slate-600 mt-0.5">${p.notes}</div>` : ''}
                         </td>
-                        <td class="py-3.5 px-4 whitespace-nowrap font-mono text-slate-600">
+                        <td class="py-3.5 px-4 whitespace-nowrap font-mono font-semibold text-slate-800">
                             ${p.startDate} → ${p.endDate}
                         </td>
                         <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                            <span class="inline-flex items-center justify-center px-3 py-1 rounded-lg font-extrabold bg-blue-100 text-blue-900 border border-blue-300">
                                 ${p.headcount} 人
                             </span>
                         </td>
                         <td class="py-3.5 px-4 text-right whitespace-nowrap">
                             <div class="inline-flex items-center gap-1.5">
                                 ${confirmBtn}
-                                <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition cursor-pointer" title="Edit | 編輯">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="Edit | 編輯">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
                                 </button>
-                                <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-500 hover:text-white transition cursor-pointer" title="Delete | 刪除">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white border border-slate-200 transition cursor-pointer" title="Delete | 刪除">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </td>
@@ -1753,39 +1754,39 @@
                 mobileContainer.innerHTML = filtered.map(p => {
                     let badgeHtml = '';
                     if (p.status === 'Confirmed') {
-                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Confirmed | 已確認</span>`;
+                        badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">Confirmed | 已確認</span>`;
                     } else if (p.status === 'Pending') {
-                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">Pending | 待確認</span>`;
+                        badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Pending | 待確認</span>`;
                     } else {
-                        badgeHtml = `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">2027 Plan | 規劃中</span>`;
+                        badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-900 border border-purple-300">2027 Plan | 規劃中</span>`;
                     }
 
                     const confirmBtn = p.status !== 'Confirmed'
-                        ? `<button onclick="promoteToConfirmed('${p.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">成案</button>`
+                        ? `<button onclick="promoteToConfirmed('${p.id}')" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">成案</button>`
                         : '';
 
                     return `
-                        <div class="p-3.5 bg-white space-y-2">
+                        <div class="p-4 bg-white space-y-2">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="font-bold text-sm text-slate-900">${p.customer}</span>
+                                    <span class="font-extrabold text-base text-slate-950">${p.customer}</span>
                                     ${badgeHtml}
                                 </div>
-                                <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                                <span class="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-blue-100 text-blue-900 border border-blue-300 shrink-0">
                                     ${p.headcount} 人
                                 </span>
                             </div>
-                            <div class="text-xs font-medium text-slate-800">${p.name}</div>
-                            ${p.notes ? `<div class="text-[11px] text-slate-500">${p.notes}</div>` : ''}
-                            <div class="flex items-center justify-between pt-1">
-                                <span class="font-mono text-[11px] text-slate-500">${p.startDate} → ${p.endDate}</span>
+                            <div class="text-sm font-bold text-slate-900">${p.name}</div>
+                            ${p.notes ? `<div class="text-xs font-medium text-slate-600">${p.notes}</div>` : ''}
+                            <div class="flex items-center justify-between pt-1.5">
+                                <span class="font-mono text-xs font-semibold text-slate-700">${p.startDate} → ${p.endDate}</span>
                                 <div class="flex items-center gap-1.5">
                                     ${confirmBtn}
-                                    <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 border border-slate-200">
-                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    <button onclick="openProjectModal('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-300">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
                                     </button>
-                                    <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 text-rose-600 border border-slate-200">
-                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    <button onclick="deleteProject('${p.id}')" class="p-1.5 rounded-lg bg-slate-100 text-rose-700 border border-slate-300">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </div>
                             </div>
