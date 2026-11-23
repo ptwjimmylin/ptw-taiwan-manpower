@@ -1,0 +1,162 @@
+{
+  "updatedAt": 1795404683044,
+  "settings": {
+    "totalStaff": 8,
+    "baseOps": 5,
+    "addedTwStaff": 0,
+    "addedOverseasStaff": 0,
+    "overseasNames": "",
+    "thresholdDays": 15,
+    "thresholdUtil": 85,
+    "rules": {
+      "onsite": 1,
+      "single": 2,
+      "double": 3,
+      "large": 6
+    }
+  },
+  "projects": [
+    {
+      "id": "p1",
+      "status": "Confirmed",
+      "customer": "TSMC 200mm",
+      "name": "Onsite labor contract support (9:00–18:00, Mon–Fri) | 駐廠人力支援合約",
+      "sizeType": "onsite",
+      "headcount": 1,
+      "startDate": "2026-11-01",
+      "endDate": "2027-03-31",
+      "notes": "Long-term dedicated senior engineer | 長期佔用 1 名資深工程師，壓縮日常彈性池"
+    },
+    {
+      "id": "p2",
+      "status": "Confirmed",
+      "customer": "UMC 8S",
+      "name": "Tool relocation & deinstallation (incl. tip change) | 移機與拆機作業 (含 Tip 更換)",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2026-12-14",
+      "endDate": "2026-12-18",
+      "notes": "Deinstallation starts 14 Dec 2026 | 12/14 啟動拆機，需 2 名工程師"
+    },
+    {
+      "id": "p3",
+      "status": "Confirmed",
+      "customer": "Micron",
+      "name": "Tool deinstallation | 機台拆機專案",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2026-11-09",
+      "endDate": "2026-11-12",
+      "notes": "Scheduled for 9 Nov 2026 | 排定 11/9 進場"
+    },
+    {
+      "id": "p4",
+      "status": "Confirmed",
+      "customer": "TSMC Fab 3",
+      "name": "Two tool deinstallations | 兩台機台拆機作業",
+      "sizeType": "double",
+      "headcount": 3,
+      "startDate": "2026-12-29",
+      "endDate": "2027-01-02",
+      "notes": "Confirmed year-end schedule (2026-12-29) | 跨年期間 2 台拆機"
+    },
+    {
+      "id": "p5",
+      "status": "Pending",
+      "customer": "UMC 8E",
+      "name": "Two tool deinstallations (Tentative) | 兩台機台拆機 (暫定)",
+      "sizeType": "double",
+      "headcount": 3,
+      "startDate": "2026-12-14",
+      "endDate": "2026-12-18",
+      "notes": "Tentative Dec 2026 — High overlap risk with UMC 8S | 與 UMC 8S 撞期風險高"
+    },
+    {
+      "id": "p6",
+      "status": "Pending",
+      "customer": "TSMC Fab 3",
+      "name": "88xx retrofit for \"class wafer\" | 88xx 機台改機",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2026-11-16",
+      "endDate": "2026-11-20",
+      "notes": "Tentatively mid-November 2026 | 暫定 11 月中旬進場"
+    },
+    {
+      "id": "p7",
+      "status": "Pending",
+      "customer": "TSMC (Fab TBD)",
+      "name": "Convert 92xx LPO loadport to Versaport/Indexer | 92xx LPO 改機",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2027-02-15",
+      "endDate": "2027-02-19",
+      "notes": "After CNY 2027 | @John: Please provide a quotation (報價追蹤)"
+    },
+    {
+      "id": "p8",
+      "status": "Pending",
+      "customer": "TSMC Fab 8",
+      "name": "Convert 93xx TDK loadport to Versaport | 93xx TDK 改機",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2027-01-18",
+      "endDate": "2027-01-22",
+      "notes": "Awaiting customer schedule confirmation | 待客戶確認進場週次"
+    },
+    {
+      "id": "p9",
+      "status": "Pending",
+      "customer": "WaveTek",
+      "name": "Retrofit 8620 (47.5/57.5mm flat, 500μm wafer) | 8620 改機",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2026-12-07",
+      "endDate": "2026-12-11",
+      "notes": "@John: Please provide a quotation (報價中)"
+    },
+    {
+      "id": "p10",
+      "status": "Planning",
+      "customer": "TSMC Fab 3",
+      "name": "13 tool relocations (Major wave) | 13 台大型機台移機專案",
+      "sizeType": "large",
+      "headcount": 6,
+      "startDate": "2027-03-01",
+      "endDate": "2027-03-26",
+      "notes": "2027 Planning — Requires HQ/external engineer support | 需提前申請外部支援"
+    },
+    {
+      "id": "p11",
+      "status": "Planning",
+      "customer": "Internal / Lab",
+      "name": "Rotation unit test kit tool setup | 旋轉單元測試治具機台建置",
+      "sizeType": "single",
+      "headcount": 2,
+      "startDate": "2027-02-01",
+      "endDate": "2027-02-05",
+      "notes": "Set up in Q1 2027 | 2027 Q1 內部建置"
+    },
+    {
+      "id": "p12",
+      "status": "Planning",
+      "customer": "UMC",
+      "name": "12\"-8\" retrofit (Tool qty TBD) | 12吋轉8吋改機專案",
+      "sizeType": "double",
+      "headcount": 3,
+      "startDate": "2027-03-08",
+      "endDate": "2027-03-19",
+      "notes": "Number of tools to be confirmed | 機台數量待客戶確認"
+    }
+  ],
+  "dispatchLogs": [
+    {
+      "id": "d_1795403411547",
+      "date": "2026-11-20",
+      "fab": "test",
+      "description": "test",
+      "assignee": "test",
+      "headcount": 1
+    }
+  ]
+}
