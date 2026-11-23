@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795415944751,
+  "updatedAt": 1795415999844,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -157,6 +157,14 @@
       "description": "SEM 6P, SEM10P",
       "assignee": "Sam, Rex",
       "headcount": 2
+    },
+    {
+      "id": "d_1795415999824",
+      "date": "2026-11-24",
+      "fab": "UMC 8E",
+      "description": "9220 stage controller deliver and test",
+      "assignee": "xxx",
+      "headcount": 1
     }
   ]
 }
