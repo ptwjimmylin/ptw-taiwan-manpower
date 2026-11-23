@@ -1,11 +1,11 @@
 {
-  "updatedAt": 1795404792485,
+  "updatedAt": 1795416886388,
   "settings": {
-    "totalStaff": 8,
+    "totalStaff": 4,
     "baseOps": 5,
     "addedTwStaff": 0,
-    "addedOverseasStaff": 0,
-    "overseasNames": "",
+    "addedOverseasStaff": 2,
+    "overseasNames": "Sam, JW",
     "thresholdDays": 15,
     "thresholdUtil": 85,
     "rules": {
@@ -139,14 +139,14 @@
     },
     {
       "id": "p12",
-      "status": "Planning",
       "customer": "UMC",
+      "status": "Planning",
       "name": "12\"-8\" retrofit (Tool qty TBD) | 12吋轉8吋改機專案",
       "sizeType": "double",
       "headcount": 3,
       "startDate": "2027-03-08",
       "endDate": "2027-03-19",
-      "notes": "Number of tools to be confirmed | 機台數量待客戶確認"
+      "notes": "Number of tools to be confirmed | 機台數量待客戶確認, Y27 有 3台(預計Jan-Y27 有PO)，Y28 有 2台"
     }
   ],
   "dispatchLogs": [
@@ -157,6 +157,46 @@
       "description": "SEM 6P, SEM10P",
       "assignee": "Sam, Rex",
       "headcount": 2
+    },
+    {
+      "id": "d_1795415999824",
+      "date": "2026-11-24",
+      "fab": "UMC 8E",
+      "description": "9220 stage controller deliver and test",
+      "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416029433",
+      "date": "2026-11-24",
+      "fab": "tsmc F3",
+      "description": "DPCDA3 PM",
+      "assignee": "Sam",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416131151",
+      "date": "2026-11-24",
+      "fab": "UMC 8S",
+      "description": "L1SME07 9300, penning gauge\nnumber: 8659603",
+      "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416250436",
+      "date": "2026-11-25",
+      "fab": "tsmc F8",
+      "description": "BPCD03 PM",
+      "assignee": "Hardy",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416305713",
+      "date": "2026-11-26",
+      "fab": "tsmc F8",
+      "description": "BPCD05 PM",
+      "assignee": "Jay",
+      "headcount": 1
     }
   ]
 }
