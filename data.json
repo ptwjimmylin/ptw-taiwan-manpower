@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795435917669,
+  "updatedAt": 1795435934870,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -220,14 +220,6 @@
       "fab": "on duty",
       "description": "on duty",
       "assignee": "Hardy",
-      "headcount": 1
-    },
-    {
-      "id": "d_1795435917659",
-      "date": "2026-11-22",
-      "fab": "Test",
-      "description": "Test",
-      "assignee": "Test",
       "headcount": 1
     }
   ]
