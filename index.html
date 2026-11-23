@@ -45,7 +45,7 @@
 <body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
 
     <!-- ===================================================================== -->
-    <!-- 頂部導覽列 (Top Navigation & Live Multi-User Cloud Sync Status)       -->
+    <!-- 頂部導覽列 (Top Navigation & GitHub Native Sync Status)               -->
     <!-- ===================================================================== -->
     <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
         <div class="w-full px-3 sm:px-6 py-2.5 sm:py-3">
@@ -62,27 +62,32 @@
                             <p class="text-[11px] text-slate-500 hidden md:block">
                                 Executive Capacity Dashboard & Daily Field Dispatch Log <span class="text-slate-400">| 營運容量儀表板與每日現場派工行程表</span>
                             </p>
-                            <button onclick="openCloudSetupModal()" id="cloud-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:brightness-95 transition cursor-pointer" title="Click to setup Cloud Sync | 點擊設定雲端多人同步">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                <span id="cloud-sync-text">Initializing... | 初始化中...</span>
+                            <button onclick="openGitHubSyncModal()" id="cloud-sync-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:brightness-95 transition cursor-pointer" title="點擊設定 GitHub 寫入權限（瀏覽免設定）">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span id="cloud-sync-text">GitHub Live Sync | 讀取最新排程中...</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-0.5" title="Adjust Display Scale & Font Size | 調整畫面與字體大小">
+                    <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-0.5" title="調整畫面與字體大小">
                         <button onclick="setFontSizeScale('sm')" id="font-btn-sm" class="px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">A-</button>
                         <button onclick="setFontSizeScale('md')" id="font-btn-md" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer">A</button>
                         <button onclick="setFontSizeScale('lg')" id="font-btn-lg" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition cursor-pointer">A+</button>
                     </div>
 
-                    <button onclick="openCloudSetupModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 transition cursor-pointer" title="Cloud Sync Setup | 雲端同步連線設定">
-                        <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
-                        <span>Cloud <span class="hidden sm:inline text-slate-500">| 雲端同步</span></span>
+                    <button onclick="manualRefreshFromGitHub()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="立即從 GitHub 抓取最新資料">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Refresh <span class="hidden sm:inline text-slate-500">| 立即更新</span></span>
                     </button>
 
-                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="Toggle Audio Alert | 開啟主動警示音效">
+                    <button onclick="openGitHubSyncModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-emerald-700 border border-slate-200 transition cursor-pointer" title="設定 GitHub 寫入同步權限">
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                        <span>Sync Setup <span class="hidden sm:inline text-slate-500">| 同步權限</span></span>
+                    </button>
+
+                    <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="開啟主動警示音效">
                         <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-500"></i>
                         <span id="notify-status-text" class="hidden sm:inline">Alert: ON | 警示開啟</span>
                     </button>
@@ -97,12 +102,12 @@
                         <span>Draft <span class="hidden sm:inline font-normal opacity-90">| 增員草稿</span></span>
                     </button>
 
-                    <button onclick="exportCSV()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="Export CSV | 匯出 CSV 報表">
+                    <button onclick="exportCSV()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer" title="匯出 CSV 報表">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                         <span class="hidden md:inline">Export <span class="text-slate-500">| 匯出</span></span>
                     </button>
 
-                    <button onclick="openResetConfirmModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 border border-slate-200 transition cursor-pointer" title="Reset Default Data | 重設為預設範例資料">
+                    <button onclick="openResetConfirmModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 border border-slate-200 transition cursor-pointer" title="重設為預設範例資料">
                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
@@ -495,17 +500,17 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 4：重設雲端共享資料確認視窗                                      -->
+    <!-- Modal 4：重設共享資料確認視窗                                          -->
     <!-- ===================================================================== -->
     <div id="reset-confirm-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div class="flex items-center gap-2.5 text-amber-600">
                 <i data-lucide="alert-triangle" class="w-6 h-6 shrink-0"></i>
-                <h3 class="text-base font-bold text-slate-900">Reset Shared Cloud Data? | 重設雲端共享資料？</h3>
+                <h3 class="text-base font-bold text-slate-900">Reset Shared Data? | 重設共享資料？</h3>
             </div>
             <p class="text-xs text-slate-600 leading-relaxed">
-                This will overwrite the shared schedule and dispatch logs for <strong>all team members</strong> back to the default template.
-                <span class="block text-slate-400 mt-1">此操作將會覆蓋所有同事正在共用的雲端專案清單與派工紀錄，並還原為預設範例資料。</span>
+                This will overwrite the schedule and dispatch logs back to the default template.
+                <span class="block text-slate-400 mt-1">此操作將會把專案清單與派工紀錄還原為預設範例資料。</span>
             </p>
             <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
                 <button onclick="closeResetConfirmModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">Cancel | 取消</button>
@@ -515,50 +520,58 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 5：團隊雲端資料庫 (Firebase) 連線設定精靈                        -->
+    <!-- Modal 5：GitHub 原生免 Firebase 雙向同步設定視窗                      -->
     <!-- ===================================================================== -->
-    <div id="cloud-setup-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-4">
-        <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl space-y-4">
+    <div id="github-sync-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="cloud" class="w-5 h-5 text-emerald-600"></i>
-                    <h3 class="text-base font-bold text-slate-900">Team Multi-User Cloud Sync Setup | 團隊雲端即時同步設定</h3>
+                    <i data-lucide="git-branch" class="w-5 h-5 text-emerald-600"></i>
+                    <h3 class="text-base font-bold text-slate-900">GitHub Direct Sync (No Firebase) | GitHub 原生同步設定</h3>
                 </div>
-                <button onclick="closeCloudSetupModal()" class="text-slate-400 hover:text-slate-700 cursor-pointer p-1">
+                <button onclick="closeGitHubSyncModal()" class="text-slate-400 hover:text-slate-700 cursor-pointer p-1">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <div class="text-xs text-slate-600 space-y-2 leading-relaxed">
-                <p>
-                    Paste your PTW team's <strong>Firebase Config</strong> below to enable real-time sync across PC and mobile devices.
-                    <span class="block text-slate-500">貼上你們 PTW 團隊共用的 Firebase 設定金鑰並儲存，即可讓電腦與手機即時雙向同步。</span>
-                </p>
+            <div class="text-xs text-slate-600 space-y-2 leading-relaxed bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <p class="font-semibold text-slate-800">完全不使用 Firebase！資料直接存在您自己的 GitHub 專案（data.json）：</p>
+                <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                    <li><strong>所有人看網頁（含手機）：</strong>完全免設定，打開網址自動抓取最新排程。</li>
+                    <li><strong>要從電腦或手機寫入更新：</strong>只需貼上一次您的 GitHub Personal Access Token（僅存在本機瀏覽器，不會上傳公開），之後每次儲存都會自動同步推上 GitHub！</li>
+                </ul>
             </div>
 
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Firebase Config (JSON or JS Object) | 貼上 Firebase Config：</label>
-                <textarea id="firebase-config-input" rows="7" placeholder='{
-  "apiKey": "AIzaSy...",
-  "authDomain": "ptw-taiwan.firebaseapp.com",
-  "projectId": "ptw-taiwan",
-  "storageBucket": "ptw-taiwan.appspot.com",
-  "messagingSenderId": "123456789",
-  "appId": "1:123456789:web:abcdef"
-}' class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs font-mono text-slate-800 focus:outline-none focus:border-emerald-500"></textarea>
-                <p id="cloud-config-error" class="text-xs text-rose-600 mt-1 hidden"></p>
+            <div class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">GitHub Owner | 帳號</label>
+                        <input type="text" id="gh-owner" value="ptwjimmylin" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Repository | 專案名稱</label>
+                        <input type="text" id="gh-repo" value="ptw-taiwan-manpower" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">GitHub Personal Access Token (寫入用，純瀏覽可留空)：</label>
+                    <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx 或 github_pat_xxxx" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-emerald-500">
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        取得方式：GitHub 右上角頭像 → Settings → Developer settings → Personal access tokens → Tokens (classic) → 勾選 <strong>repo</strong> 即可。
+                    </p>
+                </div>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200">
-                <button type="button" onclick="clearSavedFirebaseConfig()" class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer">
-                    Disconnect | 清除連線設定
+                <button type="button" onclick="clearGitHubToken()" class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer">
+                    Clear Token | 清除 Token
                 </button>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="closeCloudSetupModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+                    <button type="button" onclick="closeGitHubSyncModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
                         Close | 關閉
                     </button>
-                    <button type="button" onclick="saveAndConnectFirebaseConfig()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition cursor-pointer">
-                        Save & Connect | 儲存並連線同步
+                    <button type="button" onclick="saveGitHubSyncConfig()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition cursor-pointer">
+                        Save & Push Now | 儲存並立即同步
                     </button>
                 </div>
             </div>
@@ -572,16 +585,9 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- JavaScript 核心邏輯、自動容量計算引擎與團隊雲端即時同步模組           -->
+    <!-- JavaScript 核心邏輯、自動容量計算引擎與 GitHub 原生同步模組            -->
     <!-- ===================================================================== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // ★ 若您想全團隊連設定都不用按，可直接把 PTW 的 Firebase Config 物件貼在這裡取代 null：
-        const TEAM_FIREBASE_CONFIG = null;
-
+    <script>
         // 1. 預設專案資料庫
         const DEFAULT_PROJECTS = [
             {
@@ -766,9 +772,8 @@
         let lastAlertLevel = null;
 
         // =====================================================================
-        // 雲端與本機雙重保護引擎 (自動救回舊版本資料 + 團隊即時同步)
+        // GitHub 原生資料同步引擎 (直接讀寫同 Repo 下的 data.json，免 Firebase)
         // =====================================================================
-        const LOCAL_STORAGE_FB_KEY = 'ptw_taiwan_firebase_config_v1';
         const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v6';
         const LEGACY_STORAGE_KEYS = [
             'ptw_taiwan_local_backup_v5',
@@ -777,13 +782,35 @@
             'ptw_taiwan_local_backup_v2',
             'ptw_taiwan_local_backup_v1'
         ];
+        const LOCAL_STORAGE_GH_KEY = 'ptw_taiwan_github_sync_v1';
         const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ptw-taiwan-manpower';
-        let db = null;
-        let auth = null;
-        let currentUser = null;
-        let isCloudReady = false;
-        let lastSyncedHash = '';
+
+        let ghConfig = {
+            owner: 'ptwjimmylin',
+            repo: 'ptw-taiwan-manpower',
+            token: ''
+        };
+        let lastKnownUpdatedAt = 0;
+
+        function loadGitHubConfig() {
+            // 自動從當前 GitHub Pages 網址偵測 owner 與 repo
+            try {
+                const host = window.location.hostname;
+                const pathParts = window.location.pathname.split('/').filter(Boolean);
+                if (host.endsWith('.github.io')) {
+                    ghConfig.owner = host.replace('.github.io', '');
+                    if (pathParts.length > 0) ghConfig.repo = pathParts[0];
+                }
+            } catch (e) {}
+
+            try {
+                const raw = localStorage.getItem(LOCAL_STORAGE_GH_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    ghConfig = { ...ghConfig, ...parsed };
+                }
+            } catch (e) {}
+        }
 
         window.setFontSizeScale = function (scale) {
             const isMobile = window.innerWidth < 768;
@@ -828,20 +855,6 @@
             } catch (e) {}
         }
 
-        function getActiveFirebaseConfig() {
-            if (typeof __firebase_config !== 'undefined') {
-                return JSON.parse(__firebase_config);
-            }
-            if (TEAM_FIREBASE_CONFIG && TEAM_FIREBASE_CONFIG.apiKey) {
-                return TEAM_FIREBASE_CONFIG;
-            }
-            try {
-                const saved = localStorage.getItem(LOCAL_STORAGE_FB_KEY);
-                if (saved) return JSON.parse(saved);
-            } catch (e) {}
-            return null;
-        }
-
         function loadLocalBackup() {
             try {
                 const keysToTry = [LOCAL_STORAGE_DATA_KEY, ...LEGACY_STORAGE_KEYS];
@@ -853,7 +866,8 @@
                         if (parsed.settings) appSettings = { ...appSettings, ...parsed.settings };
                         if (Array.isArray(parsed.projects) && parsed.projects.length > 0) projects = parsed.projects;
                         if (Array.isArray(parsed.dispatchLogs)) dispatchLogs = parsed.dispatchLogs;
-                        saveLocalBackup();
+                        lastKnownUpdatedAt = parsed.updatedAt || 0;
+                        saveLocalBackup(lastKnownUpdatedAt);
                         return true;
                     }
                 }
@@ -861,9 +875,11 @@
             return false;
         }
 
-        function saveLocalBackup() {
+        function saveLocalBackup(ts = Date.now()) {
+            lastKnownUpdatedAt = ts;
             try {
                 localStorage.setItem(LOCAL_STORAGE_DATA_KEY, JSON.stringify({
+                    updatedAt: ts,
                     settings: appSettings,
                     projects: projects,
                     dispatchLogs: dispatchLogs
@@ -884,7 +900,7 @@
                 badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping';
             } else {
                 badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:brightness-95 transition cursor-pointer';
-                badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse';
+                badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-amber-500';
             }
         }
 
@@ -899,97 +915,187 @@
             window._toastTimer = setTimeout(() => {
                 toast.classList.add('hidden');
                 toast.classList.remove('flex');
-            }, 2600);
+            }, 2800);
         }
 
-        async function pushToSharedCloud() {
-            saveLocalBackup();
-            if (!isCloudReady || !db || !currentUser) return;
+        // UTF-8 安全 Base64 編解碼（支援中文字）
+        function utf8ToBase64(str) {
+            const bytes = new TextEncoder().encode(str);
+            let bin = '';
+            for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+            return btoa(bin);
+        }
+
+        function base64ToUtf8(b64) {
+            const bin = atob(b64.replace(/\n/g, ''));
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return new TextDecoder().decode(bytes);
+        }
+
+        // 從 GitHub 讀取最新 data.json（所有人包含手機皆可免 Token 直接讀取）
+        async function pullFromGitHub(isManual = false) {
+            try {
+                if (isManual) updateSyncBadge('SYNCING', 'Fetching from GitHub... | 正在讀取最新資料...');
+                let data = null;
+
+                // 1. 若有設定 Token，優先透過 GitHub API 讀取（完全零快取延遲）
+                if (ghConfig.token) {
+                    const apiRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json?t=${Date.now()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${ghConfig.token}`,
+                            'Accept': 'application/vnd.github+json'
+                        }
+                    });
+                    if (apiRes.ok) {
+                        const fileMeta = await apiRes.json();
+                        data = JSON.parse(base64ToUtf8(fileMeta.content));
+                    }
+                }
+
+                // 2. 若未設 Token（如手機或一般同事檢視），直接從 GitHub Raw / Pages 讀取 data.json
+                if (!data) {
+                    const rawUrl = `https://raw.githubusercontent.com/${ghConfig.owner}/${ghConfig.repo}/main/data.json?t=${Date.now()}`;
+                    const res = await fetch(rawUrl);
+                    if (res.ok) {
+                        data = await res.json();
+                    }
+                }
+
+                if (data && data.settings && Array.isArray(data.projects)) {
+                    const remoteTs = data.updatedAt || 0;
+                    if (remoteTs > lastKnownUpdatedAt || isManual) {
+                        appSettings = { ...appSettings, ...data.settings };
+                        projects = data.projects;
+                        dispatchLogs = Array.isArray(data.dispatchLogs) ? data.dispatchLogs : [];
+                        saveLocalBackup(remoteTs || Date.now());
+                        syncSettingsToInputs();
+                        recalculateAll(false);
+                        if (isManual) showToast('Updated from GitHub! | 已從 GitHub 同步最新資料');
+                    }
+                    updateSyncBadge('LIVE', ghConfig.token
+                        ? 'GitHub Sync ON (Read/Write) | 雙向即時同步中'
+                        : 'GitHub Sync ON (Auto Read) | 自動同步最新排程');
+                    return true;
+                } else {
+                    updateSyncBadge(ghConfig.token ? 'LIVE' : 'OFFLINE', ghConfig.token
+                        ? 'Ready to Push First Sync | 就緒（儲存即建立雲端檔）'
+                        : 'Local Saved | 本機已安全保存（點此設定同步權限）');
+                    return false;
+                }
+            } catch (err) {
+                updateSyncBadge('OFFLINE', 'Local Saved | 本機已安全保存');
+                return false;
+            }
+        }
+
+        // 將最新資料寫回 GitHub 專案的 data.json（全團隊與手機立刻看得到）
+        async function pushToGitHub() {
+            const now = Date.now();
+            saveLocalBackup(now);
+
+            if (!ghConfig.token) {
+                updateSyncBadge('OFFLINE', 'Local Saved (Click Sync Setup to Publish) | 本機已存（點「同步權限」即可推送到手機）');
+                return;
+            }
 
             const payload = {
-                updatedAt: Date.now(),
-                updatedBy: currentUser.uid,
+                updatedAt: now,
                 settings: appSettings,
                 projects: projects,
                 dispatchLogs: dispatchLogs
             };
-            lastSyncedHash = JSON.stringify({
-                settings: payload.settings,
-                projects: payload.projects,
-                dispatchLogs: payload.dispatchLogs
-            });
+
+            const apiUrl = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`;
 
             try {
-                updateSyncBadge('SYNCING', 'Syncing to Team... | 正在同步至全團隊...');
-                const boardDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'ptw_manpower_board', 'shared_state');
-                await setDoc(boardDocRef, payload);
-                updateSyncBadge('LIVE', 'Live Team Sync ON | 電腦與手機雲端即時同步中');
+                updateSyncBadge('SYNCING', 'Pushing to GitHub... | 正在同步至全團隊...');
+
+                // 先取得目前 data.json 的 sha（若檔案已存在）
+                let sha = undefined;
+                const checkRes = await fetch(`${apiUrl}?t=${Date.now()}`, {
+                    headers: {
+                        'Authorization': `Bearer ${ghConfig.token}`,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+                if (checkRes.ok) {
+                    const meta = await checkRes.json();
+                    sha = meta.sha;
+                }
+
+                const putBody = {
+                    message: `Update PTW Taiwan manpower & dispatch (${new Date().toISOString()})`,
+                    content: utf8ToBase64(JSON.stringify(payload, null, 2)),
+                    branch: 'main'
+                };
+                if (sha) putBody.sha = sha;
+
+                const putRes = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${ghConfig.token}`,
+                        'Accept': 'application/vnd.github+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (!putRes.ok) {
+                    throw new Error(`HTTP ${putRes.status}`);
+                }
+
+                updateSyncBadge('LIVE', 'GitHub Sync ON (Read/Write) | 雙向即時同步中');
             } catch (err) {
-                console.error('Cloud push error:', err);
-                updateSyncBadge('OFFLINE', 'Cloud Permission Error | 雲端寫入權限異常');
+                console.error('GitHub push failed:', err);
+                updateSyncBadge('OFFLINE', 'Sync Token Error | 同步權限錯誤，請檢查 Token');
+                showToast('GitHub sync failed — check Token | 推送失敗，請檢查 GitHub Token 權限');
             }
         }
 
-        // 雲端設定 Modal 控制
-        window.openCloudSetupModal = function () {
-            const modal = document.getElementById('cloud-setup-modal');
-            const input = document.getElementById('firebase-config-input');
-            const errEl = document.getElementById('cloud-config-error');
-            errEl.classList.add('hidden');
+        window.manualRefreshFromGitHub = async function () {
+            await pullFromGitHub(true);
+        };
 
-            const existing = getActiveFirebaseConfig();
-            input.value = existing ? JSON.stringify(existing, null, 2) : '';
+        window.openGitHubSyncModal = function () {
+            document.getElementById('gh-owner').value = ghConfig.owner || 'ptwjimmylin';
+            document.getElementById('gh-repo').value = ghConfig.repo || 'ptw-taiwan-manpower';
+            document.getElementById('gh-token').value = ghConfig.token || '';
+            const modal = document.getElementById('github-sync-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         };
 
-        window.closeCloudSetupModal = function () {
-            const modal = document.getElementById('cloud-setup-modal');
+        window.closeGitHubSyncModal = function () {
+            const modal = document.getElementById('github-sync-modal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         };
 
-        window.saveAndConnectFirebaseConfig = function () {
-            const raw = document.getElementById('firebase-config-input').value.trim();
-            const errEl = document.getElementById('cloud-config-error');
-            errEl.classList.add('hidden');
-
-            if (!raw) {
-                errEl.textContent = 'Please paste your Firebase config object. | 請貼上 Firebase Config 設定內容。';
-                errEl.classList.remove('hidden');
-                return;
-            }
-
+        window.saveGitHubSyncConfig = async function () {
+            ghConfig.owner = document.getElementById('gh-owner').value.trim() || 'ptwjimmylin';
+            ghConfig.repo = document.getElementById('gh-repo').value.trim() || 'ptw-taiwan-manpower';
+            ghConfig.token = document.getElementById('gh-token').value.trim();
             try {
-                let cleaned = raw
-                    .replace(/const\s+\w+\s*=\s*/, '')
-                    .replace(/;\s*$/, '');
-                let parsed;
-                try {
-                    parsed = JSON.parse(cleaned);
-                } catch (e) {
-                    parsed = (new Function('return (' + cleaned + ')'))();
-                }
-
-                if (!parsed || !parsed.apiKey || !parsed.projectId) {
-                    throw new Error('Missing apiKey or projectId');
-                }
-
-                localStorage.setItem(LOCAL_STORAGE_FB_KEY, JSON.stringify(parsed));
-                closeCloudSetupModal();
-                showToast('Firebase config saved! Reconnecting... | 設定已儲存，重新連線中...');
-                setTimeout(() => window.location.reload(), 600);
-            } catch (err) {
-                errEl.textContent = 'Invalid format. Please copy the full { apiKey: "...", projectId: "..." } block. | 格式不正確，請完整複製包含 apiKey 與 projectId 的物件內容。';
-                errEl.classList.remove('hidden');
+                localStorage.setItem(LOCAL_STORAGE_GH_KEY, JSON.stringify(ghConfig));
+            } catch (e) {}
+            closeGitHubSyncModal();
+            if (ghConfig.token) {
+                await pushToGitHub();
+                showToast('GitHub Sync Connected & Pushed! | 已連線並同步至全團隊！');
+            } else {
+                await pullFromGitHub(true);
             }
         };
 
-        window.clearSavedFirebaseConfig = function () {
-            localStorage.removeItem(LOCAL_STORAGE_FB_KEY);
-            closeCloudSetupModal();
-            showToast('Cloud config cleared | 已清除雲端設定');
-            setTimeout(() => window.location.reload(), 600);
+        window.clearGitHubToken = function () {
+            ghConfig.token = '';
+            try {
+                localStorage.setItem(LOCAL_STORAGE_GH_KEY, JSON.stringify(ghConfig));
+            } catch (e) {}
+            closeGitHubSyncModal();
+            updateSyncBadge('LIVE', 'GitHub Sync ON (Auto Read) | 自動同步最新排程');
+            showToast('Write Token cleared | 已清除寫入 Token');
         };
 
         // =====================================================================
@@ -997,64 +1103,17 @@
         // =====================================================================
         async function initApp() {
             initFontSizeScale();
+            loadGitHubConfig();
             loadLocalBackup();
             syncSettingsToInputs();
             recalculateAll(false);
             lucide.createIcons();
 
-            try {
-                const fbConfig = getActiveFirebaseConfig();
-                if (!fbConfig || !fbConfig.apiKey) {
-                    updateSyncBadge('OFFLINE', 'Local Mode (Click to Setup Cloud Sync) | 單機模式 (點擊設定雲端同步)');
-                    return;
-                }
-
-                const app = initializeApp(fbConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                currentUser = auth.currentUser;
-                if (!currentUser) return;
-                isCloudReady = true;
-
-                const boardDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'ptw_manpower_board', 'shared_state');
-                onSnapshot(boardDocRef, async (snap) => {
-                    if (snap.exists()) {
-                        const data = snap.data();
-                        if (data && data.settings && Array.isArray(data.projects)) {
-                            const incomingHash = JSON.stringify({
-                                settings: data.settings,
-                                projects: data.projects,
-                                dispatchLogs: data.dispatchLogs || []
-                            });
-                            if (incomingHash !== lastSyncedHash) {
-                                lastSyncedHash = incomingHash;
-                                appSettings = { ...appSettings, ...data.settings };
-                                projects = data.projects;
-                                dispatchLogs = Array.isArray(data.dispatchLogs) ? data.dispatchLogs : [];
-                                saveLocalBackup();
-                                syncSettingsToInputs();
-                                recalculateAll(false);
-                            }
-                        }
-                        updateSyncBadge('LIVE', 'Live Team Sync ON | 電腦與手機雲端即時同步中');
-                    } else {
-                        await pushToSharedCloud();
-                    }
-                }, (error) => {
-                    console.error('Firestore listener error:', error);
-                    updateSyncBadge('OFFLINE', 'Cloud Sync Disconnected | 雲端連線中斷');
-                });
-            } catch (err) {
-                console.error('Init cloud error:', err);
-                updateSyncBadge('OFFLINE', 'Local Saved | 本機已安全保存');
-            }
+            // 啟動時立即向 GitHub 抓取最新排程，並每 15 秒背景自動檢查更新
+            await pullFromGitHub(false);
+            setInterval(() => {
+                pullFromGitHub(false);
+            }, 15000);
         }
 
         // 重設確認視窗控制
@@ -1088,8 +1147,8 @@
 
             syncSettingsToInputs();
             recalculateAll(false);
-            await pushToSharedCloud();
-            showToast('Shared data reset to defaults | 已還原雲端預設資料');
+            await pushToGitHub();
+            showToast('Shared data reset to defaults | 已還原預設資料');
         };
 
         function syncSettingsToInputs() {
@@ -1124,8 +1183,8 @@
             recalculateAll(userInitiated);
 
             if (userInitiated) {
-                await pushToSharedCloud();
-                showToast('Team settings synced | 團隊人力編制設定已同步');
+                await pushToGitHub();
+                showToast('Team settings saved & synced | 團隊人力編制設定已儲存並同步');
             }
         };
 
@@ -1148,7 +1207,7 @@
             });
 
             recalculateAll(true);
-            await pushToSharedCloud();
+            await pushToGitHub();
             showToast('Sizing rules synced | 換算規則已同步');
         };
 
@@ -1615,14 +1674,14 @@
 
             closeDailyDispatchModal();
             recalculateAll(true);
-            await pushToSharedCloud();
+            await pushToGitHub();
             showToast(`Dispatch saved & synced: ${payload.fab} | 已儲存並同步每日派工`);
         };
 
         window.deleteDailyDispatch = async function (id) {
             dispatchLogs = dispatchLogs.filter(d => d.id !== id);
             recalculateAll(false);
-            await pushToSharedCloud();
+            await pushToGitHub();
             showToast('Dispatch log deleted & synced | 已刪除並同步該筆派工');
         };
 
@@ -1753,7 +1812,7 @@
             if (proj) {
                 proj.status = 'Confirmed';
                 recalculateAll(true);
-                await pushToSharedCloud();
+                await pushToGitHub();
                 showToast(`Confirmed & synced: ${proj.customer} | 已確認成案並同步`);
             }
         };
@@ -1761,7 +1820,7 @@
         window.deleteProject = async function (id) {
             projects = projects.filter(p => p.id !== id);
             recalculateAll(true);
-            await pushToSharedCloud();
+            await pushToGitHub();
             showToast('Project deleted & synced | 已刪除並同步專案');
         };
 
@@ -1839,7 +1898,7 @@
 
             closeProjectModal();
             recalculateAll(true);
-            await pushToSharedCloud();
+            await pushToGitHub();
             showToast(`Saved & synced: ${payload.customer} | 專案已儲存並同步`);
         };
 
