@@ -859,16 +859,16 @@
             try {
                 const keysToTry = [LOCAL_STORAGE_DATA_KEY, ...LEGACY_STORAGE_KEYS];
                 for (const key of keysToTry) {
-                    const raw = localStorage.getItem(key);
-                    if (!raw) continue;
-                    const parsed = JSON.parse(raw);
-                    if (parsed && (parsed.settings || Array.isArray(parsed.projects) || Array.isArray(parsed.dispatchLogs))) {
-                        if (parsed.settings) appSettings = { ...appSettings, ...parsed.settings };
-                        if (Array.isArray(parsed.projects) && parsed.projects.length > 0) projects = parsed.projects;
-                        if (Array.isArray(parsed.dispatchLogs)) dispatchLogs = parsed.dispatchLogs;
-                        lastKnownUpdatedAt = parsed.updatedAt || 0;
-                        saveLocalBackup(lastKnownUpdatedAt);
-                        return true;
+                // 2. 若未設 Token（如手機或一般同事檢視），改走 GitHub REST API 零快取通道（公開專案免 Token 即可即時讀取最新 commit）
+                if (!data) {
+                    const pubApiRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json?ref=main&t=${Date.now()}`, {
+                        headers: {
+                            'Accept': 'application/vnd.github.raw+json'
+                        },
+                        cache: 'no-store'
+                    });
+                    if (pubApiRes.ok) {
+                        data = await pubApiRes.json();
                     }
                 }
             } catch (e) {}
