@@ -792,16 +792,15 @@
         // 免設定雲端多人同步引擎 (True Zero-Config Auto-Provisioning Cloud Sync)
         // 自動向雲端申請真實儲存空間並將同步代碼寫入網址 (?sync=...)，手機/同事打開即同步
         // =====================================================================
-        const KV_API_BASE = 'https://kvdb.io/A28xK9mP4qR7vN3wL6zT1y';
+        const KV_HOST = 'https://kvdb.io';
         const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v4';
-        const LOCAL_STORAGE_SYNC_ID_KEY = 'ptw_taiwan_cloud_channel_v1';
+        const LOCAL_STORAGE_SYNC_ID_KEY = 'ptw_taiwan_cloud_bucket_v2';
         const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
-        const DEFAULT_TEAM_CHANNEL = 'ptw-tw-shared-board-2026';
-        let activeSyncChannel = DEFAULT_TEAM_CHANNEL;
+        let activeSyncChannel = '';
         let lastSyncedHash = '';
         let syncPollTimer = null;
 
-        function resolveSyncChannel() {
+        async function resolveSyncChannel() {
             const params = new URLSearchParams(window.location.search);
             const urlChannel = params.get('sync');
             if (urlChannel && urlChannel.trim()) {
@@ -809,12 +808,35 @@
                 try {
                     localStorage.setItem(LOCAL_STORAGE_SYNC_ID_KEY, activeSyncChannel);
                 } catch (e) {}
-            } else {
+                return;
+            }
+
+            try {
+                const saved = localStorage.getItem(LOCAL_STORAGE_SYNC_ID_KEY);
+                if (saved && saved.trim()) {
+                    activeSyncChannel = saved.trim();
+                }
+            } catch (e) {}
+
+            // 若本機也尚未建立過真實雲端空間，向 kvdb.io 申請一個全新的專屬儲存桶
+            if (!activeSyncChannel) {
                 try {
-                    const saved = localStorage.getItem(LOCAL_STORAGE_SYNC_ID_KEY);
-                    if (saved) activeSyncChannel = saved;
-                } catch (e) {}
-                // 自動將同步頻道參數寫入網址列，確保複製網址分享給手機/同事時一定帶上同一頻道
+                    const createRes = await fetch(KV_HOST, { method: 'POST' });
+                    if (createRes.ok) {
+                        const bucketId = (await createRes.text()).trim();
+                        if (bucketId) {
+                            activeSyncChannel = bucketId;
+                            try {
+                                localStorage.setItem(LOCAL_STORAGE_SYNC_ID_KEY, activeSyncChannel);
+                            } catch (e) {}
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Auto bucket creation failed:', e);
+                }
+            }
+
+            if (activeSyncChannel) {
                 const newUrl = new URL(window.location.href);
                 newUrl.searchParams.set('sync', activeSyncChannel);
                 window.history.replaceState({}, '', newUrl.toString());
@@ -822,7 +844,7 @@
         }
 
         function getCloudUrl() {
-            return `${KV_API_BASE}/${encodeURIComponent(activeSyncChannel)}`;
+            return `${KV_HOST}/${encodeURIComponent(activeSyncChannel)}/team_board`;
         }
 
         window.copyTeamShareLink = function () {
@@ -932,6 +954,10 @@
 
         // 從免設定雲端拉取最新團隊資料
         async function pullFromSharedCloud(silent = true) {
+            if (!activeSyncChannel) {
+                updateSyncBadge('OFFLINE', 'Offline Backup Mode | 離線暫存模式');
+                return;
+            }
             try {
                 if (!silent) updateSyncBadge('SYNCING', 'Fetching Team Data... | 讀取最新資料中...');
                 const res = await fetch(`${getCloudUrl()}?t=${Date.now()}`, {
@@ -982,6 +1008,13 @@
         // 將最新變動推送至免設定雲端共享空間
         async function pushToSharedCloud() {
             saveLocalBackup();
+            if (!activeSyncChannel) {
+                await resolveSyncChannel();
+            }
+            if (!activeSyncChannel) {
+                updateSyncBadge('OFFLINE', 'Saved Locally (Network Retry) | 已暫存本機');
+                return;
+            }
             const payload = {
                 updatedAt: Date.now(),
                 settings: appSettings,
@@ -1016,12 +1049,13 @@
         // 2. 初始化應用程式
         // =====================================================================
         async function initApp() {
-            resolveSyncChannel();
             initFontSizeScale();
             loadLocalBackup();
             syncSettingsToInputs();
             recalculateAll(false);
             lucide.createIcons();
+
+            await resolveSyncChannel();
 
             // 啟動免設定雲端首次拉取與每 5 秒自動背景同步輪詢
             await pullFromSharedCloud(true);
@@ -1032,92 +1066,6 @@
                 if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
                 pullFromSharedCloud(true);
             }, 5000);
-        }
-
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-
-                const data = await res.json();
-                if (data && data.settings && Array.isArray(data.projects)) {
-                    const incomingHash = JSON.stringify({
-                        settings: data.settings,
-                        projects: data.projects,
-                        dispatchLogs: data.dispatchLogs || []
-                    });
-
-                    if (incomingHash !== lastSyncedHash) {
-                        lastSyncedHash = incomingHash;
-                        appSettings = { ...appSettings, ...data.settings };
-                        projects = data.projects;
-                        dispatchLogs = Array.isArray(data.dispatchLogs) ? data.dispatchLogs : [];
-                        saveLocalBackup();
-                        syncSettingsToInputs();
-                        recalculateAll(false);
-                        if (!silent) showToast('Synced latest team data | 已同步最新團隊資料');
-                    }
-                    updateSyncBadge('LIVE', 'Auto Team Sync ON (Zero-Config) | 免設定雲端即時同步中');
-                }
-            } catch (err) {
-                console.warn('Cloud pull fallback to local:', err);
-                updateSyncBadge('OFFLINE', 'Offline Backup Mode | 離線暫存模式');
-            }
-        }
-
-        // 將最新變動推送至免設定雲端共享空間
-        async function pushToSharedCloud() {
-            saveLocalBackup();
-            const payload = {
-                updatedAt: Date.now(),
-                settings: appSettings,
-                projects: projects,
-                dispatchLogs: dispatchLogs
-            };
-            lastSyncedHash = JSON.stringify({
-                settings: payload.settings,
-                projects: payload.projects,
-                dispatchLogs: payload.dispatchLogs
-            });
-
-            try {
-                updateSyncBadge('SYNCING', 'Syncing to Team... | 正在同步至全團隊...');
-                const res = await fetch(SHARED_CLOUD_ENDPOINT, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) throw new Error('PUT failed ' + res.status);
-                updateSyncBadge('LIVE', 'Auto Team Sync ON (Zero-Config) | 免設定雲端即時同步中');
-            } catch (err) {
-                console.warn('Cloud push error:', err);
-                updateSyncBadge('OFFLINE', 'Saved Locally (Network Retry) | 已暫存本機');
-            }
-        }
-
-        window.manualRefreshFromCloud = function () {
-            pullFromSharedCloud(false);
-        };
-
-        // =====================================================================
-        // 2. 初始化應用程式
-        // =====================================================================
-        async function initApp() {
-            initFontSizeScale();
-            loadLocalBackup();
-            syncSettingsToInputs();
-            recalculateAll(false);
-            lucide.createIcons();
-
-            // 啟動免設定雲端首次拉取與每 6 秒自動背景同步輪詢
-            await pullFromSharedCloud(true);
-            if (syncPollTimer) clearInterval(syncPollTimer);
-            syncPollTimer = setInterval(() => {
-                // 若使用者正在輸入框打字中則暫緩覆蓋，避免打斷輸入
-                const activeTag = document.activeElement?.tagName;
-                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
-                pullFromSharedCloud(true);
-            }, 6000);
         }
 
         // 重設確認視窗控制
