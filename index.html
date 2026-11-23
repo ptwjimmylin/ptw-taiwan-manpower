@@ -859,16 +859,20 @@
             try {
                 const keysToTry = [LOCAL_STORAGE_DATA_KEY, ...LEGACY_STORAGE_KEYS];
                 for (const key of keysToTry) {
-                // 2. 若未設 Token（如手機或一般同事檢視），改走 GitHub REST API 零快取通道（公開專案免 Token 即可即時讀取最新 commit）
-                if (!data) {
-                    const pubApiRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json?ref=main&t=${Date.now()}`, {
-                        headers: {
-                            'Accept': 'application/vnd.github.raw+json'
-                        },
-                        cache: 'no-store'
-                    });
-                    if (pubApiRes.ok) {
-                        data = await pubApiRes.json();
+                    const raw = localStorage.getItem(key);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.settings && Array.isArray(parsed.projects)) {
+                        lastKnownUpdatedAt = parsed.updatedAt || 0;
+                        appSettings = { ...appSettings, ...parsed.settings };
+                        projects = parsed.projects;
+                        if (Array.isArray(parsed.dispatchLogs)) {
+                            dispatchLogs = parsed.dispatchLogs;
+                        }
+                        if (key !== LOCAL_STORAGE_DATA_KEY) {
+                            saveLocalBackup(lastKnownUpdatedAt || Date.now());
+                        }
+                        return true;
                     }
                 }
             } catch (e) {}
@@ -949,16 +953,16 @@
                     });
                     if (apiRes.ok) {
                         const fileMeta = await apiRes.json();
-                        data = JSON.parse(base64ToUtf8(fileMeta.content));
-                    }
-                }
-
-                // 2. 若未設 Token（如手機或一般同事檢視），直接從 GitHub Raw / Pages 讀取 data.json
+                // 2. 若未設 Token（如手機或一般同事檢視），直接透過 GitHub REST API 零快取通道讀取最新 commit
                 if (!data) {
-                    const rawUrl = `https://raw.githubusercontent.com/${ghConfig.owner}/${ghConfig.repo}/main/data.json?t=${Date.now()}`;
-                    const res = await fetch(rawUrl);
-                    if (res.ok) {
-                        data = await res.json();
+                    const pubApiRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json?ref=main&t=${Date.now()}`, {
+                        headers: {
+                            'Accept': 'application/vnd.github.raw+json'
+                        },
+                        cache: 'no-store'
+                    });
+                    if (pubApiRes.ok) {
+                        data = await pubApiRes.json();
                     }
                 }
 
