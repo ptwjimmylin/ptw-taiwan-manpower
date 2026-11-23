@@ -22,11 +22,10 @@
         }
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f1f5f9; /* 柔和淺灰背景 (Slate-100) */
-            color: #1e293b; /* 深石板灰高對比文字 (Slate-800) */
+            background-color: #f1f5f9;
+            color: #1e293b;
             overflow-x: hidden;
         }
-        /* 自訂淺灰捲軸樣式 */
         ::-webkit-scrollbar {
             width: 7px;
             height: 7px;
@@ -40,13 +39,6 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #64748b;
-        }
-        @keyframes pulse-border {
-            0%, 100% { border-color: rgba(225, 29, 72, 0.75); box-shadow: 0 4px 16px rgba(225, 29, 72, 0.14); }
-            50% { border-color: rgba(225, 29, 72, 0.3); box-shadow: 0 2px 6px rgba(225, 29, 72, 0.05); }
-        }
-        .alert-pulse-red {
-            animation: pulse-border 2.5s infinite ease-in-out;
         }
     </style>
 </head>
@@ -190,10 +182,10 @@
                 </div>
             </div>
 
-            <!-- 4 格精簡核心人力設定列 (人數編制 / 營運保底 / 新增台灣本土人數 / 新增國外支援) -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- 4 格精簡核心人力設定列 (人數編制 / 營運保底 / 新增台灣本土人數 / 新增國外支援 + 人名欄) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3">
                 <!-- 欄位 1：人數編制 -->
-                <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-3">
+                <div class="lg:col-span-2 bg-slate-50 border border-slate-200/90 rounded-xl p-3">
                     <label class="block text-xs font-semibold text-slate-600">Total Staff | 人數編制</label>
                     <div class="flex items-center gap-1.5 mt-1.5">
                         <input type="number" id="input-total-staff" min="1" max="100" value="8" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-base font-bold text-slate-900 focus:outline-none focus:border-blue-500">
@@ -202,7 +194,7 @@
                 </div>
 
                 <!-- 欄位 2：營運保底 -->
-                <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-3">
+                <div class="lg:col-span-2 bg-slate-50 border border-slate-200/90 rounded-xl p-3">
                     <label class="block text-xs font-semibold text-slate-600">Base Ops | 營運保底</label>
                     <div class="flex items-center gap-1.5 mt-1.5">
                         <input type="number" id="input-base-ops" min="0" max="50" value="5" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-base font-bold text-amber-600 focus:outline-none focus:border-blue-500">
@@ -211,7 +203,7 @@
                 </div>
 
                 <!-- 欄位 3：新增台灣本土人數 -->
-                <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-3">
+                <div class="lg:col-span-3 bg-slate-50 border border-slate-200/90 rounded-xl p-3">
                     <label class="block text-xs font-semibold text-slate-600">Added TW Local | 新增台灣本土人數</label>
                     <div class="flex items-center gap-1.5 mt-1.5">
                         <input type="number" id="input-added-tw" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-base font-bold text-blue-600 focus:outline-none focus:border-blue-500">
@@ -219,12 +211,18 @@
                     </div>
                 </div>
 
-                <!-- 欄位 4：新增國外支援 -->
-                <div class="bg-slate-50 border border-slate-200/90 rounded-xl p-3">
-                    <label class="block text-xs font-semibold text-slate-600">Added Overseas | 新增國外支援</label>
-                    <div class="flex items-center gap-1.5 mt-1.5">
-                        <input type="number" id="input-added-overseas" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-base font-bold text-emerald-600 focus:outline-none focus:border-blue-500">
-                        <span class="text-xs text-slate-500 shrink-0">人</span>
+                <!-- 欄位 4：新增國外支援 (人數 + 支援人名輸入框) -->
+                <div class="sm:col-span-2 lg:col-span-5 bg-slate-50 border border-slate-200/90 rounded-xl p-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-600">Added Overseas | 新增國外支援</label>
+                        <span class="text-[11px] text-emerald-700 font-medium">人數 + 支援人員姓名</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1.5">
+                        <div class="flex items-center gap-1 w-24 shrink-0">
+                            <input type="number" id="input-added-overseas" min="0" max="50" value="0" onchange="updateSettings(true)" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-base font-bold text-emerald-600 focus:outline-none focus:border-blue-500">
+                            <span class="text-xs text-slate-500">人</span>
+                        </div>
+                        <input type="text" id="input-overseas-names" placeholder="填寫國外支援人名 (e.g. John, Mike)" onchange="updateSettings(true)" class="flex-1 min-w-0 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
             </div>
@@ -313,7 +311,7 @@
                 </div>
             </div>
 
-            <!-- 電腦版：同日合併分組表格 (md 以上顯示，同日多筆派工會整齊排列在同一個日期區塊內) -->
+            <!-- 電腦版：同日合併分組表格 (md 以上顯示) -->
             <div class="hidden md:block overflow-x-auto max-h-[600px] overflow-y-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="sticky top-0 z-10 bg-slate-100 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
@@ -395,7 +393,7 @@
     </main>
 
     <!-- ===================================================================== -->
-    <!-- Modal 1：新增 / 編輯每日派工與叫修行程視窗 (潔淨白底風格)               -->
+    <!-- Modal 1：新增 / 編輯每日派工與叫修行程視窗                             -->
     <!-- ===================================================================== -->
     <div id="dispatch-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
@@ -466,7 +464,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 2：新增 / 編輯專案視窗 (潔淨白底風格)                            -->
+    <!-- Modal 2：新增 / 編輯專案視窗                                           -->
     <!-- ===================================================================== -->
     <div id="project-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
@@ -542,7 +540,7 @@
     </div>
 
     <!-- ===================================================================== -->
-    <!-- Modal 3：支援調度 / 長期增聘申請單自動產生器 (潔淨白底風格)              -->
+    <!-- Modal 3：支援調度 / 長期增聘申請單自動產生器                           -->
     <!-- ===================================================================== -->
     <div id="support-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl space-y-4">
@@ -836,6 +834,7 @@
             baseOps: 5,
             addedTwStaff: 0,
             addedOverseasStaff: 0,
+            overseasNames: '',
             thresholdDays: 15,
             thresholdUtil: 85,
             rules: {
@@ -853,7 +852,202 @@
         let currentRequestMode = 'HIRING';
         let audioAlertEnabled = true;
         let lastAlertLevel = null;
-// ... existing code ... -->
+
+        // 雲端同步與驗證狀態
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let isCloudReady = false;
+        let isInitialSeedDone = false;
+        let isInitialDispatchSeedDone = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ptw-taiwan-prod';
+        const LOCAL_STORAGE_FB_KEY = 'ptw_taiwan_firebase_config_v1';
+        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v2';
+        const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
+
+        // 若您想直接寫死在程式碼給所有同事免設定，也可把物件貼在這裡取代 null：
+        const HARDCODED_FIREBASE_CONFIG = null;
+
+        // 字體大小縮放控制
+        window.setFontSizeScale = function (scale) {
+            const isMobile = window.innerWidth < 768;
+            const sizes = isMobile
+                ? { sm: '13.5px', md: '14.5px', lg: '16.5px' }
+                : { sm: '15px', md: '16.5px', lg: '18.5px' };
+            const labels = { sm: 'Compact | 標準小字', md: 'Large (Default) | 舒適大字', lg: 'Extra Large | 特大字體' };
+            document.documentElement.style.fontSize = sizes[scale] || sizes.md;
+
+            ['sm', 'md', 'lg'].forEach(key => {
+                const btn = document.getElementById(`font-btn-${key}`);
+                if (!btn) return;
+                if (key === scale) {
+                    btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer';
+                } else {
+                    btn.className = 'px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                }
+            });
+
+            try {
+                localStorage.setItem(LOCAL_STORAGE_FONT_KEY, scale);
+            } catch (e) {}
+
+            if (labels[scale]) {
+                showToast(`Display Size: ${labels[scale]}`);
+            }
+        };
+
+        function initFontSizeScale() {
+            try {
+                const savedScale = localStorage.getItem(LOCAL_STORAGE_FONT_KEY) || 'md';
+                const isMobile = window.innerWidth < 768;
+                const sizes = isMobile
+                    ? { sm: '13.5px', md: '14.5px', lg: '16.5px' }
+                    : { sm: '15px', md: '16.5px', lg: '18.5px' };
+                document.documentElement.style.fontSize = sizes[savedScale] || sizes.md;
+                ['sm', 'md', 'lg'].forEach(key => {
+                    const btn = document.getElementById(`font-btn-${key}`);
+                    if (!btn) return;
+                    btn.className = key === savedScale
+                        ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm transition cursor-pointer'
+                        : 'px-2 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer';
+                });
+            } catch (e) {}
+        }
+
+        // 瀏覽器全螢幕切換控制
+        window.toggleFullScreen = function () {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+        };
+
+        document.addEventListener('fullscreenchange', () => {
+            const label = document.getElementById('fullscreen-btn-text');
+            if (!label) return;
+            if (document.fullscreenElement) {
+                label.innerHTML = 'Exit Fullscreen <span class="text-slate-500">| 離開全螢幕</span>';
+            } else {
+                label.innerHTML = 'Fullscreen <span class="text-slate-500">| 全螢幕</span>';
+            }
+        });
+
+        function loadLocalBackupIfOffline() {
+            try {
+                const raw = localStorage.getItem(LOCAL_STORAGE_DATA_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (parsed.settings) appSettings = { ...appSettings, ...parsed.settings };
+                if (Array.isArray(parsed.projects) && parsed.projects.length > 0) projects = parsed.projects;
+                if (Array.isArray(parsed.dispatchLogs)) dispatchLogs = parsed.dispatchLogs;
+            } catch (e) {}
+        }
+
+        function saveLocalBackup() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_DATA_KEY, JSON.stringify({
+                    settings: appSettings,
+                    projects: projects,
+                    dispatchLogs: dispatchLogs
+                }));
+            } catch (e) {}
+        }
+
+        function getActiveFirebaseConfig() {
+            if (typeof __firebase_config !== 'undefined') {
+                return JSON.parse(__firebase_config);
+            }
+            if (HARDCODED_FIREBASE_CONFIG) {
+                return HARDCODED_FIREBASE_CONFIG;
+            }
+            try {
+                const saved = localStorage.getItem(LOCAL_STORAGE_FB_KEY);
+                if (saved) return JSON.parse(saved);
+            } catch (e) {}
+            return null;
+        }
+
+        function updateSyncBadge(state, text) {
+            const badge = document.getElementById('cloud-sync-badge');
+            const label = document.getElementById('cloud-sync-text');
+            if (!badge || !label) return;
+            label.textContent = text;
+            if (state === 'LIVE') {
+                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer';
+                badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+            } else if (state === 'SYNCING') {
+                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition cursor-pointer';
+                badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping';
+            } else {
+                badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition cursor-pointer';
+                badge.firstElementChild.className = 'w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse';
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notification');
+            const textEl = document.getElementById('toast-message');
+            if (!toast || !textEl) return;
+            textEl.textContent = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2600);
+        }
+
+        // =====================================================================
+        // 2. 初始化雲端即時協作連線
+        // =====================================================================
+        async function initApp() {
+            initFontSizeScale();
+            loadLocalBackupIfOffline();
+            syncSettingsToInputs();
+            recalculateAll(false);
+            lucide.createIcons();
+
+            try {
+                const rawConfig = getActiveFirebaseConfig();
+                if (!rawConfig) {
+                    updateSyncBadge('OFFLINE', 'Local Mode (Click to Setup Cloud Sync) | 單機模式 (點擊設定雲端同步)');
+                    return;
+                }
+
+                const app = initializeApp(rawConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                currentUser = auth.currentUser;
+                if (!currentUser) return;
+
+                isCloudReady = true;
+                const uidDisplay = document.getElementById('display-user-id');
+                if (uidDisplay) {
+                    uidDisplay.textContent = `ID: ${currentUser.uid.slice(0, 8)}...`;
+                }
+
+                startRealtimeListeners();
+            } catch (err) {
+                console.error('Cloud sync init error:', err);
+                updateSyncBadge('OFFLINE', 'Sync Error (Click to Check Config) | 雲端連線異常');
+            }
+        }
+
+        function startRealtimeListeners() {
+            if (!currentUser || !db) return;
+
+            // 監聽共享團隊設定
             const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_settings', 'team_config');
             onSnapshot(settingsDocRef, async (snap) => {
                 if (snap.exists()) {
@@ -863,6 +1057,7 @@
                         baseOps: data.baseOps ?? 5,
                         addedTwStaff: data.addedTwStaff ?? 0,
                         addedOverseasStaff: data.addedOverseasStaff ?? 0,
+                        overseasNames: data.overseasNames ?? '',
                         thresholdDays: data.thresholdDays ?? 15,
                         thresholdUtil: data.thresholdUtil ?? 85,
                         rules: {
@@ -880,19 +1075,232 @@
             }, (error) => {
                 console.error('Settings listener error:', error);
             });
-// ... existing code ... -->
+
+            // 監聽共享專案清單
+            const projectsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'semiops_projects');
+            onSnapshot(projectsColRef, async (snapshot) => {
+                if (snapshot.empty && !isInitialSeedDone) {
+                    isInitialSeedDone = true;
+                    updateSyncBadge('SYNCING', 'Initializing Shared Data... | 初始化共享資料庫...');
+                    const batch = writeBatch(db);
+                    DEFAULT_PROJECTS.forEach((p, index) => {
+                        const pRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_projects', p.id);
+                        batch.set(pRef, { ...p, sortOrder: index, updatedAt: Date.now() });
+                    });
+                    await batch.commit();
+                    return;
+                }
+
+                isInitialSeedDone = true;
+                const cloudProjects = [];
+                snapshot.forEach(docSnap => {
+                    cloudProjects.push(docSnap.data());
+                });
+
+                cloudProjects.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+                projects = cloudProjects;
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+                recalculateAll(false);
+            }, (error) => {
+                console.error('Projects listener error:', error);
+                updateSyncBadge('OFFLINE', 'Sync Error | 同步中斷');
+            });
+
+            // 監聽共享每日派工行程表
+            const dispatchColRef = collection(db, 'artifacts', appId, 'public', 'data', 'semiops_dispatches');
+            onSnapshot(dispatchColRef, async (snapshot) => {
+                if (snapshot.empty && !isInitialDispatchSeedDone) {
+                    isInitialDispatchSeedDone = true;
+                    const batch = writeBatch(db);
+                    DEFAULT_DISPATCH_LOGS.forEach((d, idx) => {
+                        const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_dispatches', d.id);
+                        batch.set(dRef, { ...d, updatedAt: Date.now() - idx * 50 });
+                    });
+                    await batch.commit();
+                    return;
+                }
+
+                isInitialDispatchSeedDone = true;
+                const cloudLogs = [];
+                snapshot.forEach(docSnap => {
+                    cloudLogs.push(docSnap.data());
+                });
+                dispatchLogs = cloudLogs;
+                recalculateAll(false);
+            }, (error) => {
+                console.error('Dispatches listener error:', error);
+            });
+        }
+
+        // 雲端設定 Modal 控制
+        window.openCloudSetupModal = function () {
+            const modal = document.getElementById('cloud-setup-modal');
+            const input = document.getElementById('firebase-config-input');
+            const errEl = document.getElementById('cloud-config-error');
+            errEl.classList.add('hidden');
+
+            const existing = getActiveFirebaseConfig();
+            if (existing) {
+                input.value = JSON.stringify(existing, null, 2);
+            } else {
+                input.value = '';
+            }
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeCloudSetupModal = function () {
+            const modal = document.getElementById('cloud-setup-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.saveAndConnectFirebaseConfig = function () {
+            const raw = document.getElementById('firebase-config-input').value.trim();
+            const errEl = document.getElementById('cloud-config-error');
+            errEl.classList.add('hidden');
+
+            if (!raw) {
+                errEl.textContent = 'Please paste your Firebase config object. | 請貼上 Firebase Config 設定內容。';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                let cleaned = raw
+                    .replace(/const\s+\w+\s*=\s*/, '')
+                    .replace(/;\s*$/, '');
+                let parsed;
+                try {
+                    parsed = JSON.parse(cleaned);
+                } catch (e) {
+                    parsed = (new Function('return (' + cleaned + ')'))();
+                }
+
+                if (!parsed || !parsed.apiKey || !parsed.projectId) {
+                    throw new Error('Missing apiKey or projectId');
+                }
+
+                localStorage.setItem(LOCAL_STORAGE_FB_KEY, JSON.stringify(parsed));
+                closeCloudSetupModal();
+                showToast('Firebase config saved! Reconnecting... | 設定已儲存，重新連線中...');
+                setTimeout(() => window.location.reload(), 600);
+            } catch (err) {
+                errEl.textContent = 'Invalid format. Please copy the full { apiKey: "...", projectId: "..." } block. | 格式不正確，請完整複製包含 apiKey 與 projectId 的物件內容。';
+                errEl.classList.remove('hidden');
+            }
+        };
+
+        window.clearSavedFirebaseConfig = function () {
+            localStorage.removeItem(LOCAL_STORAGE_FB_KEY);
+            closeCloudSetupModal();
+            showToast('Cloud config cleared | 已清除雲端設定');
+            setTimeout(() => window.location.reload(), 600);
+        };
+
         function syncSettingsToInputs() {
             document.getElementById('input-total-staff').value = appSettings.totalStaff;
             document.getElementById('input-base-ops').value = appSettings.baseOps;
             document.getElementById('input-added-tw').value = appSettings.addedTwStaff ?? 0;
             document.getElementById('input-added-overseas').value = appSettings.addedOverseasStaff ?? 0;
+            document.getElementById('input-overseas-names').value = appSettings.overseasNames ?? '';
 
             document.getElementById('rule-onsite').value = appSettings.rules.onsite;
             document.getElementById('rule-single').value = appSettings.rules.single;
             document.getElementById('rule-double').value = appSettings.rules.double;
             document.getElementById('rule-large').value = appSettings.rules.large;
         }
-// ... existing code ... -->
+
+        async function persistSettingsToCloud() {
+            saveLocalBackup();
+            if (!isCloudReady || !currentUser || !db) return;
+            try {
+                updateSyncBadge('SYNCING', 'Syncing... | 同步更新中...');
+                const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_settings', 'team_config');
+                await setDoc(settingsDocRef, {
+                    ...appSettings,
+                    updatedBy: currentUser.uid,
+                    updatedAt: Date.now()
+                });
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+            } catch (err) {
+                console.error('Save settings failed:', err);
+            }
+        }
+
+        async function persistProjectToCloud(projectObj) {
+            saveLocalBackup();
+            if (!isCloudReady || !currentUser || !db) return;
+            try {
+                updateSyncBadge('SYNCING', 'Syncing... | 同步更新中...');
+                const pRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_projects', projectObj.id);
+                await setDoc(pRef, {
+                    ...projectObj,
+                    updatedBy: currentUser.uid,
+                    updatedAt: Date.now()
+                });
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+            } catch (err) {
+                console.error('Save project failed:', err);
+            }
+        }
+
+        async function deleteProjectFromCloud(projectId) {
+            saveLocalBackup();
+            if (!isCloudReady || !currentUser || !db) return;
+            try {
+                updateSyncBadge('SYNCING', 'Syncing... | 同步刪除中...');
+                const pRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_projects', projectId);
+                await deleteDoc(pRef);
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+            } catch (err) {
+                console.error('Delete project failed:', err);
+            }
+        }
+
+        async function persistDispatchToCloud(dispatchObj) {
+            saveLocalBackup();
+            if (!isCloudReady || !currentUser || !db) return;
+            try {
+                updateSyncBadge('SYNCING', 'Syncing... | 同步更新中...');
+                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_dispatches', dispatchObj.id);
+                await setDoc(dRef, {
+                    ...dispatchObj,
+                    updatedBy: currentUser.uid,
+                    updatedAt: Date.now()
+                });
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+            } catch (err) {
+                console.error('Save dispatch failed:', err);
+            }
+        }
+
+        async function deleteDispatchFromCloud(dispatchId) {
+            saveLocalBackup();
+            if (!isCloudReady || !currentUser || !db) return;
+            try {
+                updateSyncBadge('SYNCING', 'Syncing... | 同步刪除中...');
+                const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_dispatches', dispatchId);
+                await deleteDoc(dRef);
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+            } catch (err) {
+                console.error('Delete dispatch failed:', err);
+            }
+        }
+
+        // 重設確認視窗控制
+        window.openResetConfirmModal = function () {
+            const modal = document.getElementById('reset-confirm-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.closeResetConfirmModal = function () {
+            const modal = document.getElementById('reset-confirm-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
         window.confirmExecuteReset = async function () {
             closeResetConfirmModal();
             const defaultSettings = {
@@ -900,6 +1308,7 @@
                 baseOps: 5,
                 addedTwStaff: 0,
                 addedOverseasStaff: 0,
+                overseasNames: '',
                 thresholdDays: 15,
                 thresholdUtil: 85,
                 rules: { onsite: 1, single: 2, double: 3, large: 6 }
@@ -911,7 +1320,39 @@
             saveLocalBackup();
             syncSettingsToInputs();
             recalculateAll(false);
-// ... existing code ... -->
+
+            if (isCloudReady && currentUser && db) {
+                updateSyncBadge('SYNCING', 'Resetting Cloud... | 重設雲端資料中...');
+                const batch = writeBatch(db);
+                const settingsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_settings', 'team_config');
+                batch.set(settingsDocRef, { ...defaultSettings, updatedAt: Date.now() });
+                DEFAULT_PROJECTS.forEach((p, idx) => {
+                    const pRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_projects', p.id);
+                    batch.set(pRef, { ...p, updatedAt: Date.now() - idx * 100 });
+                });
+                DEFAULT_DISPATCH_LOGS.forEach((d, idx) => {
+                    const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'semiops_dispatches', d.id);
+                    batch.set(dRef, { ...d, updatedAt: Date.now() - idx * 50 });
+                });
+                await batch.commit();
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 多人雲端即時同步中');
+                showToast('Shared data reset to defaults | 已還原雲端預設資料');
+            } else {
+                showToast('Local data reset to defaults | 已還原預設資料');
+            }
+        };
+
+        window.copyUserIdInfo = function () {
+            const uid = currentUser ? currentUser.uid : 'Local-Session';
+            const tempInput = document.createElement('input');
+            tempInput.value = uid;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(`Copied User ID: ${uid} | 已複製協作識別碼`);
+        };
+
         // =====================================================================
         // 3. 設定更新與規模規則邏輯
         // =====================================================================
@@ -920,11 +1361,13 @@
             const base = Math.max(0, parseInt(document.getElementById('input-base-ops').value) || 5);
             const addedTw = Math.max(0, parseInt(document.getElementById('input-added-tw').value) || 0);
             const addedOverseas = Math.max(0, parseInt(document.getElementById('input-added-overseas').value) || 0);
+            const overseasNames = document.getElementById('input-overseas-names').value.trim();
 
             appSettings.totalStaff = total;
             appSettings.baseOps = base;
             appSettings.addedTwStaff = addedTw;
             appSettings.addedOverseasStaff = addedOverseas;
+            appSettings.overseasNames = overseasNames;
 
             if (userInitiated) {
                 persistSettingsToCloud();
@@ -939,9 +1382,27 @@
             editor.classList.toggle('hidden');
             editor.classList.toggle('grid');
         };
-// ... existing code ... -->
+
+        window.updateRules = async function () {
+            appSettings.rules.onsite = Math.max(1, parseInt(document.getElementById('rule-onsite').value) || 1);
+            appSettings.rules.single = Math.max(1, parseInt(document.getElementById('rule-single').value) || 2);
+            appSettings.rules.double = Math.max(1, parseInt(document.getElementById('rule-double').value) || 3);
+            appSettings.rules.large = Math.max(1, parseInt(document.getElementById('rule-large').value) || 6);
+
+            projects.forEach(p => {
+                if (p.sizeType !== 'custom' && appSettings.rules[p.sizeType]) {
+                    p.headcount = appSettings.rules[p.sizeType];
+                    persistProjectToCloud(p);
+                }
+            });
+
+            await persistSettingsToCloud();
+            recalculateAll(true);
+            showToast('Sizing rules updated | 換算規則已更新');
+        };
+
         // =====================================================================
-        // 4. 核心容量計算與主動預警雷達引擎
+        // 4. 核心容量計算引擎
         // =====================================================================
         window.recalculateAll = function (playAlertIfEscalated = false) {
             const includePending = document.getElementById('toggle-include-pending').checked;
@@ -1114,6 +1575,15 @@
                 </div>`
             ];
 
+            if ((appSettings.addedOverseasStaff || 0) > 0 && appSettings.overseasNames) {
+                itemsHtml.push(`
+                    <div class="flex items-center justify-between bg-emerald-50/60 border border-emerald-200 rounded px-2 py-1 gap-1">
+                        <span class="truncate text-emerald-800">國外支援: <strong>${appSettings.overseasNames}</strong></span>
+                        <span class="font-bold text-emerald-700 shrink-0">+${appSettings.addedOverseasStaff} 人</span>
+                    </div>
+                `);
+            }
+
             dayObj.activeProjs.forEach(p => {
                 itemsHtml.push(`
                     <div class="flex items-center justify-between bg-white border border-slate-200 rounded px-2 py-1 gap-1">
@@ -1136,7 +1606,7 @@
         }
 
         // =====================================================================
-        // 6. 每月每日現場派工與叫修行程表 (同日合併分組卡片，多筆派工超清晰！)
+        // 6. 每月每日現場派工與叫修行程表 (同日合併分組卡片)
         // =====================================================================
         window.changeDispatchMonth = function (delta) {
             const picker = document.getElementById('dispatch-month-picker');
@@ -1239,7 +1709,6 @@
                         </div>
                     `);
                 } else {
-                    // 同日有一筆或多筆派工時，全部整齊收納在同一個日期列內的精緻卡片清單中！
                     const groupedItemsHtml = dayLogs.map(log => `
                         <div class="flex items-center justify-between gap-3 bg-white border border-slate-200/90 hover:border-emerald-300 rounded-xl px-3 py-2 shadow-2xs transition">
                             <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 min-w-0 flex-1">
@@ -1288,7 +1757,6 @@
                         </tr>
                     `);
 
-                    // 手機版同日合併卡片
                     const mobileSubItems = dayLogs.map(log => `
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5">
                             <div class="flex items-center justify-between gap-2">
@@ -1408,7 +1876,7 @@
         };
 
         // =====================================================================
-        // 7. 專案清單表格渲染與協作操作 (淺灰高對比樣式)
+        // 7. 專案清單表格渲染與協作操作
         // =====================================================================
         window.setFilterStatus = function (status) {
             currentFilterStatus = status;
@@ -1665,6 +2133,9 @@
                 .filter(p => a.includePending || p.status === 'Confirmed')
                 .map(p => `  - [${p.status}] ${p.customer}: ${p.name} (${p.startDate} ~ ${p.endDate}, ${p.headcount} eng.)`)
                 .join('\n');
+            const overseasNote = (appSettings.addedOverseasStaff || 0) > 0
+                ? `\n- Added Overseas Support | 國外支援人力: +${appSettings.addedOverseasStaff} (${appSettings.overseasNames || 'TBD'})`
+                : '';
 
             let draft = '';
             if (currentRequestMode === 'HIRING') {
@@ -1676,10 +2147,9 @@ To maintain our mandatory ${a.baseOps}-engineer Taiwan daily operations floor wh
 為維持台灣分公司每日基本營運保底（${a.baseOps} 人）並順利執行 2026 Q4 至 2027 Q1 半導體機台裝機、移機與改機專案，特申請增聘 +${hireCount} 名正職設備工程師。
 
 2. CAPACITY & OVERLOAD METRICS | 容量與超載數據佐證
-- Current Taiwan Headcount | 目前總編制: ${a.effectiveStaff} Engineers
+- Effective Taiwan Supply | 目前總供給人力: ${a.effectiveStaff} Engineers (Base Staff ${appSettings.totalStaff} + TW Local ${appSettings.addedTwStaff || 0} + Overseas ${appSettings.addedOverseasStaff || 0})${overseasNote}
 - Mandatory Base Operations Floor | 每日基本營運保底: ${a.baseOps} Engineers (Flex Pool: ${a.flexPool} Engineers)
-- Cumulative Overload Workdays | 累計人力超載天數: ${a.overloadDays} workdays (Alert Threshold: ${appSettings.thresholdDays} days)
-- Average Team Utilization | 平均人力負載率: ${a.avgUtil}%
+- Cumulative Overload Workdays | 累計人力超載天數: ${a.overloadDays} workdays
 - Peak Single-Day Deficit | 單日最大人力缺口: ${a.maxDeficit} Engineers (on ${a.maxDeficitDate})
 
 3. SCHEDULED PROJECTS | 專案排程明細
@@ -1693,7 +2163,7 @@ Due to overlapping customer schedules while maintaining our ${a.baseOps}-enginee
 因多項客戶專案時程重疊，且需維持台灣區每日 ${a.baseOps} 人基本營運保底，特申請調度 +${supportCount} 名短期支援工程師。
 
 2. PEAK DEFICIT DATES | 關鍵缺口日期明細
-- Peak Deficit Date | 最高缺口日: ${a.maxDeficitDate} (Shortfall: ${a.maxDeficit} engineers)
+- Peak Deficit Date | 最高缺口日: ${a.maxDeficitDate} (Shortfall: ${a.maxDeficit} engineers)${overseasNote}
 - Total Overloaded Workdays | 總計超載工作天數: ${a.overloadDays} days
 ${sampleDates || '  - No immediate deficit under current filter.'}
 
