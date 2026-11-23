@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795416029449,
+  "updatedAt": 1795416131172,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -172,6 +172,14 @@
       "fab": "tsmc F3",
       "description": "PM",
       "assignee": "Sam",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416131151",
+      "date": "2026-11-24",
+      "fab": "UMC 8S",
+      "description": "L1SME07 9300, penning gauge\nnumber: 8659603",
+      "assignee": "xxx",
       "headcount": 1
     }
   ]
