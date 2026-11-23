@@ -793,21 +793,15 @@
         let lastKnownUpdatedAt = 0;
 
         function loadGitHubConfig() {
-            // 自動從當前 GitHub Pages 網址偵測 owner 與 repo
-            try {
-                const host = window.location.hostname;
-                const pathParts = window.location.pathname.split('/').filter(Boolean);
-                if (host.endsWith('.github.io')) {
-                    ghConfig.owner = host.replace('.github.io', '');
-                    if (pathParts.length > 0) ghConfig.repo = pathParts[0];
-                }
-            } catch (e) {}
+            // 固定鎖定您的 GitHub 專案路徑（確保即使包在入口網站 iframe 內也不會抓錯 Repo）
+            ghConfig.owner = 'ptwjimmylin';
+            ghConfig.repo = 'ptw-taiwan-manpower';
 
             try {
                 const raw = localStorage.getItem(LOCAL_STORAGE_GH_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    ghConfig = { ...ghConfig, ...parsed };
+                    if (parsed.token) ghConfig.token = parsed.token;
                 }
             } catch (e) {}
         }
@@ -973,19 +967,18 @@
                 }
 
                 if (data && data.settings && Array.isArray(data.projects)) {
-                    const remoteTs = data.updatedAt || 0;
-                    if (remoteTs > lastKnownUpdatedAt || isManual) {
-                        appSettings = { ...appSettings, ...data.settings };
-                        projects = data.projects;
-                        dispatchLogs = Array.isArray(data.dispatchLogs) ? data.dispatchLogs : [];
-                        saveLocalBackup(remoteTs || Date.now());
-                        syncSettingsToInputs();
-                        recalculateAll(false);
-                        if (isManual) showToast('Updated from GitHub! | 已從 GitHub 同步最新資料');
-                    }
+                    const remoteTs = data.updatedAt || Date.now();
+                    // 強制以 GitHub 雲端資料為唯一權威（確保手機與所有裝置開啟即 100% 一致）
+                    appSettings = { ...appSettings, ...data.settings };
+                    projects = data.projects;
+                    dispatchLogs = Array.isArray(data.dispatchLogs) ? data.dispatchLogs : [];
+                    saveLocalBackup(remoteTs);
+                    syncSettingsToInputs();
+                    recalculateAll(false);
+                    if (isManual) showToast('Synced from GitHub! | 已與電腦最新資料完全同步');
                     updateSyncBadge('LIVE', ghConfig.token
                         ? 'GitHub Sync ON (Read/Write) | 雙向即時同步中'
-                        : 'GitHub Sync ON (Auto Read) | 自動同步最新排程');
+                        : 'GitHub Sync ON (Auto Read) | 已同步最新排程');
                     return true;
                 } else {
                     updateSyncBadge(ghConfig.token ? 'LIVE' : 'OFFLINE', ghConfig.token
