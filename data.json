@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795427081857,
+  "updatedAt": 1795427099575,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -204,14 +204,6 @@
       "fab": "tsmc F3",
       "description": "DPCDD2",
       "assignee": "Hardy",
-      "headcount": 1
-    },
-    {
-      "id": "d_1795426310486",
-      "date": "2026-11-27",
-      "fab": "test",
-      "description": "test",
-      "assignee": "test",
       "headcount": 1
     }
   ]
