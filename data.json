@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795416305732,
+  "updatedAt": 1795416886388,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -139,14 +139,14 @@
     },
     {
       "id": "p12",
-      "status": "Planning",
       "customer": "UMC",
+      "status": "Planning",
       "name": "12\"-8\" retrofit (Tool qty TBD) | 12吋轉8吋改機專案",
       "sizeType": "double",
       "headcount": 3,
       "startDate": "2027-03-08",
       "endDate": "2027-03-19",
-      "notes": "Number of tools to be confirmed | 機台數量待客戶確認"
+      "notes": "Number of tools to be confirmed | 機台數量待客戶確認, Y27 有 3台(預計Jan-Y27 有PO)，Y28 有 2台"
     }
   ],
   "dispatchLogs": [
