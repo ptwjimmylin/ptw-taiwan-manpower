@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795404759271,
+  "updatedAt": 1795404792485,
   "settings": {
     "totalStaff": 8,
     "baseOps": 5,
@@ -149,5 +149,14 @@
       "notes": "Number of tools to be confirmed | 機台數量待客戶確認"
     }
   ],
-  "dispatchLogs": []
+  "dispatchLogs": [
+    {
+      "id": "d_1795404792473",
+      "date": "2026-11-23",
+      "fab": "UMC8F",
+      "description": "SEM 6P, SEM10P",
+      "assignee": "Sam, Rex",
+      "headcount": 2
+    }
+  ]
 }
