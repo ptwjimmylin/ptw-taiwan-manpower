@@ -1,11 +1,11 @@
 {
-  "updatedAt": 1795415855558,
+  "updatedAt": 1795415864443,
   "settings": {
     "totalStaff": 8,
     "baseOps": 5,
     "addedTwStaff": 0,
     "addedOverseasStaff": 2,
-    "overseasNames": "",
+    "overseasNames": "Sam, JW",
     "thresholdDays": 15,
     "thresholdUtil": 85,
     "rules": {
