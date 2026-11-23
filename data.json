@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795404683044,
+  "updatedAt": 1795404759271,
   "settings": {
     "totalStaff": 8,
     "baseOps": 5,
@@ -149,14 +149,5 @@
       "notes": "Number of tools to be confirmed | 機台數量待客戶確認"
     }
   ],
-  "dispatchLogs": [
-    {
-      "id": "d_1795403411547",
-      "date": "2026-11-20",
-      "fab": "test",
-      "description": "test",
-      "assignee": "test",
-      "headcount": 1
-    }
-  ]
+  "dispatchLogs": []
 }
