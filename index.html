@@ -88,6 +88,11 @@
                         <span>Sync Setup <span class="hidden sm:inline text-emerald-700">| 同步權限</span></span>
                     </button>
 
+                    <button onclick="copyTeamEditLink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-300 transition cursor-pointer" title="複製免設定可編輯網址給手機或同事（打開即自動連線雙向同步）">
+                        <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        <span>Share Edit Link <span class="hidden sm:inline text-teal-700">| 複製可編輯網址</span></span>
+                    </button>
+
                     <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition cursor-pointer" title="開啟主動警示音效">
                         <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-600"></i>
                         <span id="notify-status-text" class="hidden sm:inline">Alert: ON | 警示開啟</span>
@@ -563,9 +568,14 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-200">
-                <button type="button" onclick="clearGitHubToken()" class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer">
-                    Clear Token | 清除 Token
-                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="clearGitHubToken()" class="px-3 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer">
+                        Clear Token | 清除 Token
+                    </button>
+                    <button type="button" onclick="copyTeamEditLink()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-300 transition cursor-pointer">
+                        Copy Team Edit Link | 複製免設定同步網址
+                    </button>
+                </div>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="closeGitHubSyncModal()" class="px-4 py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
                         Close | 關閉
@@ -797,6 +807,25 @@
             ghConfig.owner = 'ptwjimmylin';
             ghConfig.repo = 'ptw-taiwan-manpower';
 
+            // 1. 優先檢查網址是否帶有團隊免設定授權參數 (#token=...)，讓手機與同事點開即自動具備雙向修改權限
+            try {
+                const hash = window.location.hash || '';
+                const match = hash.match(/token=([^&]+)/);
+                if (match && match[1]) {
+                    const urlToken = decodeURIComponent(match[1]).trim();
+                    if (urlToken) {
+                        ghConfig.token = urlToken;
+                        localStorage.setItem(LOCAL_STORAGE_GH_KEY, JSON.stringify(ghConfig));
+                        // 清除網址列敏感參數避免外流，但已永久記憶於該手機/同事瀏覽器中
+                        if (window.history && window.history.replaceState) {
+                            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            // 2. 讀取瀏覽器已記憶的同步權限
             try {
                 const raw = localStorage.getItem(LOCAL_STORAGE_GH_KEY);
                 if (raw) {
@@ -806,29 +835,21 @@
             } catch (e) {}
         }
 
-        window.setFontSizeScale = function (scale) {
-            const isMobile = window.innerWidth < 768;
-            const sizes = isMobile
-                ? { sm: '14.5px', md: '15.5px', lg: '17.5px' }
-                : { sm: '16px', md: '17.5px', lg: '19.5px' };
-            const labels = { sm: 'Compact | 標準', md: 'Default | 清晰大字', lg: 'Large | 特大字體' };
-            document.documentElement.style.fontSize = sizes[scale] || sizes.md;
-
-            ['sm', 'md', 'lg'].forEach(key => {
-                const btn = document.getElementById(`font-btn-${key}`);
-                if (!btn) return;
-                btn.className = key === scale
-                    ? 'px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-sm transition cursor-pointer'
-                    : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition cursor-pointer';
-            });
-
-            try {
-                localStorage.setItem(LOCAL_STORAGE_FONT_KEY, scale);
-            } catch (e) {}
-
-            if (labels[scale]) {
-                showToast(`Display Size: ${labels[scale]}`);
+        window.copyTeamEditLink = function () {
+            if (!ghConfig.token) {
+                openGitHubSyncModal();
+                showToast('Please paste Token first | 請先在電腦貼入一次 Token 再複製連結');
+                return;
             }
+            const baseUrl = 'https://ptwjimmylin.github.io/ptw-taiwan-manpower/';
+            const shareUrl = `${baseUrl}#token=${encodeURIComponent(ghConfig.token)}`;
+            const tempInput = document.createElement('input');
+            tempInput.value = shareUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Copied! Send this link to mobile/team for 1-click edit sync | 已複製免設定同步網址，傳給手機或同事點開即可直接修改同步！');
         };
 
         function initFontSizeScale() {
@@ -987,13 +1008,16 @@
                     return false;
                 }
             } catch (err) {
-                updateSyncBadge('OFFLINE', 'Local Saved | 本機已安全保存');
+                console.warn('GitHub pull fallback to local:', err);
+                updateSyncBadge(ghConfig.token ? 'LIVE' : 'OFFLINE', ghConfig.token
+                    ? 'GitHub Sync ON (Read/Write) | 雙向即時同步中'
+                    : 'Local Saved | 本機已安全保存（點此設定同步權限）');
                 return false;
             }
         }
 
-        // 將最新資料寫回 GitHub 專案的 data.json（全團隊與手機立刻看得到）
-        async function pushToGitHub() {
+        // 將最新資料寫回 GitHub 專案的 data.json（支援多人同時修改自動重試，全團隊與手機立刻看得到）
+        async function pushToGitHub(retryCount = 0) {
             const now = Date.now();
             saveLocalBackup(now);
 
@@ -1043,6 +1067,11 @@
                     },
                     body: JSON.stringify(putBody)
                 });
+
+                // 若多人同時寫入發生 409 SHA 衝突，自動重新取得最新 SHA 再推送一次
+                if (putRes.status === 409 && retryCount < 2) {
+                    return await pushToGitHub(retryCount + 1);
+                }
 
                 if (!putRes.ok) {
                     throw new Error(`HTTP ${putRes.status}`);
