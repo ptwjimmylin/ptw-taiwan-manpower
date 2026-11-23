@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795415999844,
+  "updatedAt": 1795416029449,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -164,6 +164,14 @@
       "fab": "UMC 8E",
       "description": "9220 stage controller deliver and test",
       "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795416029433",
+      "date": "2026-11-24",
+      "fab": "tsmc F3",
+      "description": "PM",
+      "assignee": "Sam",
       "headcount": 1
     }
   ]
