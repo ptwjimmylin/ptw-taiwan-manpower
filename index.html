@@ -92,12 +92,6 @@
                         <span>Sync Now <span class="hidden sm:inline text-slate-500">| 立即同步</span></span>
                     </button>
 
-                    <!-- 一鍵複製團隊共用同步網址按鈕 -->
-                    <button onclick="copyTeamShareLink()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-xs transition cursor-pointer" title="Copy Team Sync URL for Mobile & Colleagues | 複製同步網址傳給手機與同事">
-                        <i data-lucide="share-2" class="w-3.5 h-3.5 text-emerald-600"></i>
-                        <span>Share Link <span class="hidden sm:inline font-normal text-emerald-600">| 複製同步網址</span></span>
-                    </button>
-
                     <!-- 狀態指示與系統通知開關 -->
                     <button onclick="requestBrowserNotification()" id="btn-notify-toggle" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-xs transition cursor-pointer" title="Toggle Audio & Push Alert | 開啟主動警示音效">
                         <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-500"></i>
@@ -789,101 +783,14 @@
         let lastAlertLevel = null;
 
         // =====================================================================
-        // 免設定雲端多人同步引擎 (CORS-Safe Zero-Config Cloud Sync via JSONBlob)
-        // 100% 支援 GitHub Pages 跨網域讀寫，自動建立真實雲端空間並附帶 ?sync= 參數
+        // 免設定雲端多人同步引擎 (Fixed-Key Zero-Config Cloud Sync via KeyValue.xyz)
+        // 電腦與手機只要開同一個 GitHub Pages 網址，免網址參數、免金鑰直接互通！
         // =====================================================================
-        const BLOB_API_BASE = 'https://jsonblob.com/api/jsonBlob';
-        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v5';
-        const LOCAL_STORAGE_SYNC_ID_KEY = 'ptw_taiwan_blob_id_v1';
+        const SYNC_KEY_URL = 'https://api.keyvalue.xyz/9e8b7a6c/ptw_taiwan_manpower_shared_v1';
+        const LOCAL_STORAGE_DATA_KEY = 'ptw_taiwan_local_backup_v6';
         const LOCAL_STORAGE_FONT_KEY = 'ptw_taiwan_font_scale_v1';
-        let activeSyncChannel = '';
         let lastSyncedHash = '';
         let syncPollTimer = null;
-
-        async function resolveSyncChannel() {
-            const params = new URLSearchParams(window.location.search);
-            const urlChannel = params.get('sync');
-            if (urlChannel && urlChannel.trim()) {
-                activeSyncChannel = urlChannel.trim();
-                try {
-                    localStorage.setItem(LOCAL_STORAGE_SYNC_ID_KEY, activeSyncChannel);
-                } catch (e) {}
-                return;
-            }
-
-            try {
-                const saved = localStorage.getItem(LOCAL_STORAGE_SYNC_ID_KEY);
-                if (saved && saved.trim()) {
-                    activeSyncChannel = saved.trim();
-                }
-            } catch (e) {}
-
-            // 若本機尚未建立雲端空間，向 jsonblob.com POST 申請一個支援 CORS 的真實雲端 ID
-            if (!activeSyncChannel) {
-                try {
-                    const initialPayload = {
-                        updatedAt: Date.now(),
-                        settings: appSettings,
-                        projects: projects,
-                        dispatchLogs: dispatchLogs
-                    };
-                    const createRes = await fetch(BLOB_API_BASE, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(initialPayload)
-                    });
-                    if (createRes.ok) {
-                        const locHeader = createRes.headers.get('Location') || createRes.headers.get('x-jsonblob');
-                        let blobId = '';
-                        if (locHeader) {
-                            blobId = locHeader.split('/').pop().trim();
-                        }
-                        if (blobId) {
-                            activeSyncChannel = blobId;
-                            lastSyncedHash = JSON.stringify({
-                                settings: initialPayload.settings,
-                                projects: initialPayload.projects,
-                                dispatchLogs: initialPayload.dispatchLogs
-                            });
-                            try {
-                                localStorage.setItem(LOCAL_STORAGE_SYNC_ID_KEY, activeSyncChannel);
-                            } catch (e) {}
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Auto cloud blob creation failed:', e);
-                }
-            }
-
-            if (activeSyncChannel) {
-                const newUrl = new URL(window.location.href);
-                newUrl.searchParams.set('sync', activeSyncChannel);
-                window.history.replaceState({}, '', newUrl.toString());
-            }
-        }
-
-        function getCloudUrl() {
-            return `${BLOB_API_BASE}/${encodeURIComponent(activeSyncChannel)}`;
-        }
-
-        window.copyTeamShareLink = function () {
-            const shareUrl = new URL(window.location.href);
-            if (activeSyncChannel) {
-                shareUrl.searchParams.set('sync', activeSyncChannel);
-            }
-            const finalStr = shareUrl.toString();
-
-            const tempInput = document.createElement('input');
-            tempInput.value = finalStr;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            showToast('Copied Team Sync Link! Paste to Mobile/Teams | 已複製同步網址，貼到手機或群組即可同步！');
-        };
 
         window.setFontSizeScale = function (scale) {
             const isMobile = window.innerWidth < 768;
@@ -982,28 +889,28 @@
 
         // 從免設定雲端拉取最新團隊資料
         async function pullFromSharedCloud(silent = true) {
-            if (!activeSyncChannel) {
-                updateSyncBadge('OFFLINE', 'Offline Backup Mode | 離線暫存模式');
-                return;
-            }
             try {
                 if (!silent) updateSyncBadge('SYNCING', 'Fetching Team Data... | 讀取最新資料中...');
-                const res = await fetch(`${getCloudUrl()}?t=${Date.now()}`, {
+                const res = await fetch(`${SYNC_KEY_URL}?t=${Date.now()}`, {
                     method: 'GET',
-                    headers: { 'Accept': 'application/json' },
                     cache: 'no-store'
                 });
 
                 if (res.status === 404) {
-                    activeSyncChannel = '';
-                    localStorage.removeItem(LOCAL_STORAGE_SYNC_ID_KEY);
-                    await resolveSyncChannel();
+                    // 首次使用尚未建立資料，立即將目前資料寫入雲端
+                    await pushToSharedCloud();
                     return;
                 }
 
                 if (!res.ok) throw new Error('HTTP ' + res.status);
 
-                const data = await res.json();
+                const rawText = await res.text();
+                if (!rawText || !rawText.trim()) {
+                    await pushToSharedCloud();
+                    return;
+                }
+
+                const data = JSON.parse(rawText);
                 if (data && data.settings && Array.isArray(data.projects)) {
                     const incomingHash = JSON.stringify({
                         settings: data.settings,
@@ -1021,7 +928,7 @@
                         recalculateAll(false);
                         if (!silent) showToast('Synced latest team data | 已同步最新團隊資料');
                     }
-                    updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
+                    updateSyncBadge('LIVE', 'Live Team Sync ON | 電腦與手機雲端即時同步中');
                 }
             } catch (err) {
                 console.warn('Cloud pull fallback to local:', err);
@@ -1032,13 +939,6 @@
         // 將最新變動推送至免設定雲端共享空間
         async function pushToSharedCloud() {
             saveLocalBackup();
-            if (!activeSyncChannel) {
-                await resolveSyncChannel();
-                if (activeSyncChannel) {
-                    updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
-                }
-                return;
-            }
             const payload = {
                 updatedAt: Date.now(),
                 settings: appSettings,
@@ -1053,16 +953,12 @@
 
             try {
                 updateSyncBadge('SYNCING', 'Syncing to Team... | 正在同步至全團隊...');
-                const res = await fetch(getCloudUrl(), {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                const res = await fetch(SYNC_KEY_URL, {
+                    method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                if (!res.ok) throw new Error('PUT failed ' + res.status);
-                updateSyncBadge('LIVE', `Live Team Sync ON | 雲端多人即時同步中`);
+                if (!res.ok) throw new Error('POST failed ' + res.status);
+                updateSyncBadge('LIVE', 'Live Team Sync ON | 電腦與手機雲端即時同步中');
             } catch (err) {
                 console.warn('Cloud push error:', err);
                 updateSyncBadge('OFFLINE', 'Saved Locally (Network Retry) | 已暫存本機');
@@ -1083,16 +979,14 @@
             recalculateAll(false);
             lucide.createIcons();
 
-            await resolveSyncChannel();
-
-            // 啟動免設定雲端首次拉取與每 5 秒自動背景同步輪詢
+            // 啟動免設定雲端首次拉取與每 4 秒自動背景同步輪詢
             await pullFromSharedCloud(true);
             if (syncPollTimer) clearInterval(syncPollTimer);
             syncPollTimer = setInterval(() => {
                 const activeTag = document.activeElement?.tagName;
                 if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
                 pullFromSharedCloud(true);
-            }, 5000);
+            }, 4000);
         }
 
         // 重設確認視窗控制
