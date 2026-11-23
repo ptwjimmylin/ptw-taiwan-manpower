@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795426310502,
+  "updatedAt": 1795427081857,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -201,9 +201,9 @@
     {
       "id": "d_1795426013095",
       "date": "2026-11-30",
-      "fab": "xx",
+      "fab": "tsmc F3",
       "description": "DPCDD2",
-      "assignee": "xxx",
+      "assignee": "Hardy",
       "headcount": 1
     },
     {
