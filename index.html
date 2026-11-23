@@ -953,6 +953,12 @@
                     });
                     if (apiRes.ok) {
                         const fileMeta = await apiRes.json();
+                        if (fileMeta.content) {
+                            data = JSON.parse(base64ToUtf8(fileMeta.content));
+                        }
+                    }
+                }
+
                 // 2. 若未設 Token（如手機或一般同事檢視），直接透過 GitHub REST API 零快取通道讀取最新 commit
                 if (!data) {
                     const pubApiRes = await fetch(`https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json?ref=main&t=${Date.now()}`, {
