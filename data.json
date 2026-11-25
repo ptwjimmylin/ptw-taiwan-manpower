@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795577164223,
+  "updatedAt": 1795577339143,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -228,6 +228,14 @@
       "fab": "UMC 8S",
       "description": "replace PE2 A",
       "assignee": "Sam",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795577339122",
+      "date": "2026-11-26",
+      "fab": "tsmc 15A",
+      "description": "robot controller",
+      "assignee": "xxx",
       "headcount": 1
     }
   ]
