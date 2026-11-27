@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795751056573,
+  "updatedAt": 1795751142561,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -364,6 +364,14 @@
       "fab": "tsmc F3",
       "description": "DECO01 PM",
       "assignee": "JW",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795751142540",
+      "date": "2026-12-10",
+      "fab": "tsmc F8",
+      "description": "協議組織",
+      "assignee": "xxx",
       "headcount": 1
     }
   ]
