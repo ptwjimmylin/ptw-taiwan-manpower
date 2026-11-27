@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795750411520,
+  "updatedAt": 1795750560303,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -317,6 +317,14 @@
       "description": "on duty",
       "assignee": "JW",
       "headcount": 1
+    },
+    {
+      "id": "d_1795750560284",
+      "date": "2026-12-07",
+      "fab": "Micron",
+      "description": "deinstall",
+      "assignee": "xxx",
+      "headcount": 2
     }
   ]
 }
