@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795744561404,
+  "updatedAt": 1795744597682,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -260,6 +260,14 @@
       "fab": "tsmc F3",
       "description": "DCPDD5 daily",
       "assignee": "Sam",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795744597670",
+      "date": "2026-11-27",
+      "fab": "UMC8F",
+      "description": "SEM-6P",
+      "assignee": "Jay",
       "headcount": 1
     }
   ]
