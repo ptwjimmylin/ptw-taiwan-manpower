@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795744411065,
+  "updatedAt": 1795744465017,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -243,6 +243,14 @@
       "date": "2026-12-01",
       "fab": "tsmc F8",
       "description": "BBCD03 PM",
+      "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795744465007",
+      "date": "2026-12-02",
+      "fab": "tsmc F3",
+      "description": "CBCD04 PM",
       "assignee": "xxx",
       "headcount": 1
     }
