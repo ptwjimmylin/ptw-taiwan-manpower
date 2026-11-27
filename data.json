@@ -1,9 +1,9 @@
 {
-  "updatedAt": 1795787657480,
+  "updatedAt": 1795787659011,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
-    "addedTwStaff": 2,
+    "addedTwStaff": 0,
     "addedOverseasStaff": 2,
     "overseasNames": "",
     "thresholdDays": 15,
