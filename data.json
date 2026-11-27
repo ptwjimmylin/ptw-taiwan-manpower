@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795744597682,
+  "updatedAt": 1795750131682,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -268,6 +268,14 @@
       "fab": "UMC8F",
       "description": "SEM-6P",
       "assignee": "Jay",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795750131663",
+      "date": "2026-12-01",
+      "fab": "tsmc F6",
+      "description": "協議組織會議",
+      "assignee": "Hardy",
       "headcount": 1
     }
   ]
