@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795750560303,
+  "updatedAt": 1795750610247,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -325,6 +325,14 @@
       "description": "deinstall",
       "assignee": "xxx",
       "headcount": 2
+    },
+    {
+      "id": "d_1795750610228",
+      "date": "2026-12-07",
+      "fab": "tsmc F8",
+      "description": "BPCD07 PM",
+      "assignee": "Jay",
+      "headcount": 1
     }
   ]
 }
