@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795750205160,
+  "updatedAt": 1795750267463,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -284,6 +284,14 @@
       "fab": "tsmc F3",
       "description": "on duty",
       "assignee": "Hardy",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795750267445",
+      "date": "2026-12-04",
+      "fab": "tsmc F5",
+      "description": "on duty",
+      "assignee": "Jay",
       "headcount": 1
     }
   ]
