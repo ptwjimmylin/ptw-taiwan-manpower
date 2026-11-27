@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795744266313,
+  "updatedAt": 1795744341515,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -235,6 +235,14 @@
       "date": "2026-11-26",
       "fab": "tsmc 15A",
       "description": "robot controller",
+      "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795744341506",
+      "date": "2026-12-01",
+      "fab": "tsmc F8",
+      "description": "BBCD03",
       "assignee": "xxx",
       "headcount": 1
     }
