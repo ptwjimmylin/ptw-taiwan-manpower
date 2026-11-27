@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795750377792,
+  "updatedAt": 1795750399398,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -300,6 +300,14 @@
       "fab": "PTW",
       "description": "semitool move in",
       "assignee": "xxx",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795750399380",
+      "date": "2026-12-05",
+      "fab": "on duty",
+      "description": "on duty",
+      "assignee": "JW",
       "headcount": 1
     }
   ]
