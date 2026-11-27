@@ -1,5 +1,5 @@
 {
-  "updatedAt": 1795751015873,
+  "updatedAt": 1795751056573,
   "settings": {
     "totalStaff": 4,
     "baseOps": 5,
@@ -356,6 +356,14 @@
       "fab": "工安課",
       "description": "工安課",
       "assignee": "Harvey",
+      "headcount": 1
+    },
+    {
+      "id": "d_1795751056552",
+      "date": "2026-12-09",
+      "fab": "tsmc F3",
+      "description": "DECO01 PM",
+      "assignee": "JW",
       "headcount": 1
     }
   ]
